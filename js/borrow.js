@@ -46,7 +46,7 @@ function loadMap(){
 	      popupAnchor: [0, -11],
 	    }),
 	    green: L.icon({
-	      iconUrl: '/vLibrary/img/gren.png',
+	      iconUrl: '/vLibrary/img/green.png',
 	      iconRetinaUrl: '/vLibrary/img/green.png',
 	      iconSize: [31, 27],
 	      iconAnchor: [13.5, 13.5],
