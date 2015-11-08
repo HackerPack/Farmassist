@@ -10,7 +10,16 @@ $(function(){
 			$("#books").html(renderedHTML);
 
 			$(".btn-success").click(function(){
-				console.log($(this).data("id"));
+				if($(this).html() != "Rent it!"){
+					return;
+				}
+				var isbn = $(this).data("id");
+				$(this).removeClass('btn-success');
+				$(this).addClass('btn-danger');
+				$(this).html("Renting");
+				borrow_book(authData.uid, isbn, function(){
+					$(this).html("Done");
+				});
 			})
 		});
 	}
