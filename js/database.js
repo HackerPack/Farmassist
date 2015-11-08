@@ -62,6 +62,8 @@ userRef.once('value', function(data) {
 	callback(user_data);
 	});
 }
+
+
 getUser('facebook:1037502162960482', function(data){
     data.forEach(function(innerData){
         //console.log(innerData.fname);

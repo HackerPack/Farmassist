@@ -189,7 +189,7 @@
                                         <i class="fa fa-tasks fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">26</div>
+                                        <div id="booksBorrowed" class="huge"></div>
                                         <div>Total books borrowed</div>
                                     </div>
                                 </div>
@@ -205,8 +205,8 @@
                                         <i class="fa fa-share fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">12</div>
-                                        <div>Total books lend</div>
+                                        <div id="booksLent" class="huge"></div>
+                                        <div>Total books lent</div>
                                     </div>
                                 </div>
                             </div>
@@ -221,7 +221,7 @@
                                         <i class="fa fa-shopping-cart fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">124</div>
+                                        <div id="moneySaved" class="huge"></div>
                                         <div>Total money saved</div>
                                     </div>
                                 </div>
@@ -237,7 +237,7 @@
                                         <i class="fa fa-life-ring fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div class="huge">13</div>
+                                        <div id="moneyDonated" class="huge"></div>
                                         <div>Total money donated</div>
                                     </div>
                                 </div>
@@ -298,13 +298,22 @@
     <script>
         checkSessionLogin();
 
+        getUser(authData.uid,function(user){
+          console.log("User details " + user[0]);
+          document.getElementById('booksBorrowed').innerHTML = parseInt(user[0].nu_borrowed) || 0;
+          document.getElementById('booksLent').innerHTML = parseInt(user[0].nu_lent) || 0;
+          document.getElementById('moneySaved').innerHTML = parseInt(user[0].price_borrowed) || 0;
+          document.getElementById('moneyDonated').innerHTML = parseInt(user[0].price_lent) || 0;
+        });
+
         getMyBooks(authData.uid,function(books){
           console.log("Called get my books");
           console.log(books);
-          var loc = ''
+          var loc = "<div class='list-group'>";
           for(var i=0; i<books.length; i++){
-              loc = loc + "<div class='list-group'> <a href='#' class='list-group-item'> <i class='fa fa-fw fa-share'></i>"+ books[i].name+"</a></div>";
+              loc = loc + " <a href='#' class='list-group-item'> <i class='fa fa-fw fa-share'></i>"+ books[i].name+"</a>";
             }
+          loc += "</div>";
           document.getElementById('bookLent').innerHTML = loc;
         });
 
