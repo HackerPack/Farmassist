@@ -53,3 +53,27 @@ function getBorrowedBooks(uid, callback){
     callback(return_data);
   });
 }
+
+
+
+
+
+
+
+var FIRE_BASE_URL = "https://dazzling-heat-1066.firebaseio.com/";
+var USERS_TABLE = "users/";
+
+function getUser(uid, callback){
+var user_data = [];
+var userRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+uid);
+
+userRef.once('value', function(data) {
+	console.log(data.val());
+	callback(user_data);
+	});
+}
+getUser('facebook:1037502162960482', function(data){
+    data.forEach(function(innerData){
+        //console.log(innerData.fname);
+    });
+});
