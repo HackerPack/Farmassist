@@ -20,11 +20,11 @@ function searchBook(term, callback){
   });
 }
 
-function saveBook(book){
+function saveBook(book, callback){
   var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
   var book_data = {};
   book_data[book.isbn] = book;
-  bookRef.update(book_data);
+  bookRef.update(book_data, callback);
 }
 
 function getMyBooks(uid, callback){
@@ -48,9 +48,6 @@ function getBorrowedBooks(uid, callback){
     callback(return_data);
   });
 }
-
-
-
 
 function getUser(uid, callback){
 var user_data = [];
