@@ -40,21 +40,21 @@ $(function(){
 function loadMap(){
 	var icons = {
 	    marker: L.icon({
-	      iconUrl: '/img/marker-icon.png',
-	      iconRetinaUrl: '/img/marker-icon.png',
+	      iconUrl: '/vLibrary/img/marker-icon.png',
+	      iconRetinaUrl: '/vLibrary/img/marker-icon.png',
 	      iconAnchor: [13.5, 17.5],
 	      popupAnchor: [0, -11],
 	    }),
 	    red: L.icon({
-	      iconUrl: '/img/red.png',
-	      iconRetinaUrl: '/img/red.png',
+	      iconUrl: '/vLibrary/img/red.png',
+	      iconRetinaUrl: '/vLibrary/img/red.png',
 	      iconSize: [27, 31],
 	      iconAnchor: [13.5, 13.5],
 	      popupAnchor: [0, -11],
 	    }),
 	    green: L.icon({
-	      iconUrl: '/img/gren.png',
-	      iconRetinaUrl: '/img/green.png',
+	      iconUrl: '/vLibrary/img/gren.png',
+	      iconRetinaUrl: '/vLibrary/img/green.png',
 	      iconSize: [31, 27],
 	      iconAnchor: [13.5, 13.5],
 	      popupAnchor: [0, -11],
