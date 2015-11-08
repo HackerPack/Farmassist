@@ -1,4 +1,5 @@
 function searchBook(callback){
+  var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
   searchResult = [];
   bookRef.orderByChild("ISBN").on("value", function(snapshot) {
 
@@ -24,8 +25,31 @@ function searchBook(callback){
 });
 
 function saveBook(book){
+  var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
   var book_data = {};
   book_data[book.isbn] = book;
   //console.log(book_data);
   bookRef.update(book_data);
+}
+
+function getMyBooks(uid, callback){
+  var return_data = [];
+  var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
+  bookRef.orderByChild("uid").equalTo(uid).on("value", function(snapshot) {
+    snapshot.forEach(function(data){
+      return_data.push(data.val());
+    });
+    callback(return_data);
+  });
+}
+
+function getBorrowedBooks(uid, callback){
+  var return_data = [];
+  var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
+  bookRef.orderByChild("borrow_uid").equalTo(uid).on("value", function(snapshot) {
+    snapshot.forEach(function(data){
+      return_data.push(data.val());
+    });
+    callback(return_data);
+  });
 }
