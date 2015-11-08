@@ -92,14 +92,19 @@ function loadMap(){
 function renderBooks(books){
 	var renderedHTML = "<div class='list-group'>";
 	for(var i=0; i<books.length; i++){
-		var status = "<span class='label label-success' style='margin-left:10px;'>Available</span>";
-		var btn = "<button class='btn btn-success pull-right' data-id='" + books[i].isbn +"''>Rent it!</button>";
-		if(books[i].status == 0){
-			status = "<span class='label label-danger' style='margin-left:10px;'>Taken</span>";
-			btn = "";
+		if(books[i].status == 1){
+			var status = "<span class='label label-success' style='margin-left:10px;'>Available</span>";
+			var btn = "<button class='btn btn-success pull-right' data-id='" + books[i].isbn +"''>Rent it!</button>";
+			var newHTML = "<a class='list-group-item book'><h4 class='title'>"+books[i].name+status+"</h4><p class='author'><b>Author</b>&nbsp;&nbsp;"+books[i].author+btn+"</p><div class='category'><b>Categories</b>&nbsp;&nbsp;"+books[i].catagory+"</div></a>";
+			renderedHTML += newHTML;
 		}
-		var newHTML = "<a class='list-group-item book'><h4 class='title'>"+books[i].name+status+"</h4><p class='author'><b>Author</b>&nbsp;&nbsp;"+books[i].author+btn+"</p><div class='category'><b>Categories</b>&nbsp;&nbsp;"+books[i].catagory+"</div></a>";
-		renderedHTML += newHTML;
+	}
+	for(var i=0; i<books.length; i++){
+		if(books[i].status == 0){
+			var status = "<span class='label label-danger' style='margin-left:10px;'>Taken</span>";
+			var newHTML = "<a class='list-group-item book'><h4 class='title'>"+books[i].name+status+"</h4><p class='author'><b>Author</b>&nbsp;&nbsp;"+books[i].author+"</p><div class='category'><b>Categories</b>&nbsp;&nbsp;"+books[i].catagory+"</div></a>";
+			renderedHTML += newHTML;
+		}
 	}
 	renderedHTML += "</div>";
 	return renderedHTML;

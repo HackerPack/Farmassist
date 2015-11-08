@@ -52,6 +52,22 @@ function getBorrowedBooks(uid, callback){
 
 
 
+function getUser(uid, callback){
+var user_data = [];
+var userRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+uid);
+
+userRef.once('value', function(data) {
+	//console.log(data.val());
+  user_data.push(data.val());
+	callback(user_data);
+	});
+}
+getUser('facebook:1037502162960482', function(data){
+    data.forEach(function(innerData){
+        //console.log(innerData.fname);
+    });
+});
+
 function borrow_book(uid, isbn, callback){
   var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
   var singleBookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE+"/"+isbn);
