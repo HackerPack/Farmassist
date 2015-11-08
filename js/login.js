@@ -51,6 +51,7 @@ function checkSessionLogin(){
 		window.location.href = "index.html";
 	}else{
 		window.full_name = getFName(authData) + " "+ getLName(authData);
+		$(".username").html("&nbsp;&nbsp;" + window.full_name);
 	}
 }
 
