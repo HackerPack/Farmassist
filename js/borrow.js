@@ -41,15 +41,15 @@ function loadMap(){
 	    red: L.icon({
 	      iconUrl: '/vLibrary/img/red.png',
 	      iconRetinaUrl: '/vLibrary/img/red.png',
-	      iconSize: [27, 31],
-	      iconAnchor: [5, 4],
+	      iconSize: [15, 15],
+	      iconAnchor: [5, 5],
 	      popupAnchor: [0, -11],
 	    }),
 	    green: L.icon({
 	      iconUrl: '/vLibrary/img/green.png',
 	      iconRetinaUrl: '/vLibrary/img/green.png',
-	      iconSize: [31, 27],
-	      iconAnchor: [4, 5],
+	      iconSize: [15, 15],
+	      iconAnchor: [5, 5],
 	      popupAnchor: [0, -11],
 	    })
 	}
