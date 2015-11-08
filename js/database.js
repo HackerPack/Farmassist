@@ -48,3 +48,43 @@ function getBorrowedBooks(uid, callback){
     callback(return_data);
   });
 }
+
+
+
+
+function borrow_book(uid, isbn, callback){
+  var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
+  var singleBookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE+"/"+isbn);
+  var userRef = new Firebase(FIRE_BASE_URL+USERS_TABLE);
+  var borrowedRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+uid+'/nu_borrowed');
+  var bookOwner = null;
+
+  bookRef.child(isbn).update({
+    "status":0,
+    "borrow_uid": uid
+  });
+
+  borrowedRef.transaction(function(current_value){
+    return (parseInt(current_value) || 0) +1;
+  });
+
+  singleBookRef.once("value", function(snapshot){
+    bookOwner = snapshot.val().uid;
+    console.log(bookOwner);
+    var ownerRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+bookOwner+'/nu_lent');
+    ownerRef.transaction(function(current_value){
+      return (parseInt(current_value) || 0) +1;
+    });
+    ownerRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+bookOwner+'/price_lent');
+    ownerRef.transaction(function(current_value){
+      return (parseInt(current_value) || 0) + parseInt(snapshot.val().price);
+    });
+
+  borrowedRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+uid+'/price_borrowed');
+    borrowedRef.transaction(function(current_value){
+      return (parseInt(current_value) || 0) + parseInt(snapshot.val().price);
+    });
+
+  });
+
+}
