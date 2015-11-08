@@ -8,6 +8,10 @@ $(function(){
 		searchBook(query, function(data){
 			var renderedHTML = renderBooks(data);
 			$("#books").html(renderedHTML);
+
+			$(".btn-success").click(function(){
+				console.log($(this).data("id"));
+			})
 		});
 	}
 
@@ -80,10 +84,12 @@ function renderBooks(books){
 	var renderedHTML = "<div class='list-group'>";
 	for(var i=0; i<books.length; i++){
 		var status = "<span class='label label-success' style='margin-left:10px;'>Available</span>";
+		var btn = "<button class='btn btn-success pull-right' data-id='" + books[i].isbn +"''>Rent it!</button>";
 		if(books[i].status == 0){
 			status = "<span class='label label-danger' style='margin-left:10px;'>Taken</span>";
+			btn = "";
 		}
-		var newHTML = "<a class='list-group-item book'><h4 class='title'>"+books[i].name+status+"</h4><p class='author'><b>Author</b>&nbsp;&nbsp;"+books[i].author+"</p><div class='category'><b>Categories</b>&nbsp;&nbsp;"+books[i].catagory+"</div></a>";
+		var newHTML = "<a class='list-group-item book'><h4 class='title'>"+books[i].name+status+"</h4><p class='author'><b>Author</b>&nbsp;&nbsp;"+books[i].author+btn+"</p><div class='category'><b>Categories</b>&nbsp;&nbsp;"+books[i].catagory+"</div></a>";
 		renderedHTML += newHTML;
 	}
 	renderedHTML += "</div>";
