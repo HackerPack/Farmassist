@@ -9,10 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>vLibrary</title>
-    <script src="webcomponentsjs/webcomponents-lite.min.js"></script>
-
-    <link rel="import" href="google-map/google-map.html">
+    <title>vLibrary - crowd based library</title>
 
     <link rel="stylesheet" href="css/styles.css">
     <!-- Bootstrap Core CSS -->
@@ -34,34 +31,6 @@
 </head>
 
 <body unresolved onload="getLocation()">
-
-  <script>
-
-
-  function getLocation() {
-      if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(showPosition);
-      } else {
-          $('#curLocation').html("Geolocation is not supported by this browser.");
-      }
-  }
-
-  function showPosition(position) {
-    var x = document.getElementById("userLoc");
-      loc = "Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude;
-      //alert(x.value)
-      x.latitude = position.coords.latitude;
-      x.longitude = position.coords.longitude;
-
-      var y = document.getElementById("userLocMarker");
-        loc = "Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude;
-        //alert(x.value)
-        y.latitude = position.coords.latitude;
-        y.longitude = position.coords.longitude;
-
-      //x.value = loc;
-  }
-</script>
 
     <div id="wrapper">
 
@@ -231,7 +200,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label>location</label>
+                                <label>Address</label>
                                 <input id="curLocation" class="form-control">
                             </div>
 
@@ -251,13 +220,7 @@
                         </form>
 
                     </div>
-
-                    <div id="map-container" class="col-lg-6">
-                      <google-map id="userLoc" zoom="15">
-
-                        <google-map-marker id="userLocMarker" title="User Location!" draggable="true"></google-map-marker>
-                      </google-map>
-                    </div>
+                    <div id="mapCanvas"></div>
 
                 </div>
                 <!-- /.row -->
@@ -276,12 +239,82 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 
-    <!-- Morris Charts JavaScript -->
-    <script src="js/plugins/morris/raphael.min.js"></script>
-    <script src="js/plugins/morris/morris.min.js"></script>
-    <script src="js/plugins/morris/morris-data.js"></script>
+    <script>
 
+    var geocoder = new google.maps.Geocoder();
+    function geocodePosition(pos) {
+        geocoder.geocode({
+            latLng: pos
+        }, function(responses) {
+            if (responses && responses.length > 0) {
+                updateMarkerAddress(responses[0].formatted_address);
+            } else {
+                updateMarkerAddress('Cannot determine address at this location.');
+            }
+        });
+    }
+
+    function updateMarkerPosition(latLng) {
+      window.curLat = latLng.lat();
+      window.curLog = latLng.lng();
+    }
+
+    function updateMarkerAddress(str) {
+        document.getElementById('curLocation').value = str;
+    }
+
+    function initialize() {
+        var latLng = new google.maps.LatLng(window.curLat, window.curLog);
+        var map = new google.maps.Map(document.getElementById('mapCanvas'), {
+            zoom: 16,
+            center: latLng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+        var marker = new google.maps.Marker({
+            position: latLng,
+            title: 'Point A',
+            map: map,
+            draggable: true
+        });
+
+        // Update current position info.
+        updateMarkerPosition(latLng);
+        geocodePosition(latLng);
+
+        // Add dragging event listeners.
+        /*google.maps.event.addListener(marker, 'dragstart', function() {
+            updateMarkerAddress('Dragging...');
+        });
+
+        google.maps.event.addListener(marker, 'drag', function() {
+            updateMarkerStatus('Dragging...');
+            updateMarkerPosition(marker.getPosition());
+        });*/
+
+        google.maps.event.addListener(marker, 'dragend', function() {
+            geocodePosition(marker.getPosition());
+        });
+    }
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            $('#curLocation').html("Geolocation is not supported by this browser.");
+        }
+    }
+
+    function showPosition(position) {
+        loc = "Latitude: " + position.coords.latitude + ", Longitude: " + position.coords.longitude;
+        //alert(x.value)curLat, curLog
+        window.curLat = position.coords.latitude;
+        window.curLog = position.coords.longitude;
+        console.log(window.curLat);
+        initialize();
+    }
+  </script>
 </body>
 
 </html>
