@@ -17,8 +17,9 @@ $(function(){
 				$(this).removeClass('btn-success');
 				$(this).addClass('btn-danger');
 				$(this).html("Renting");
+				var that = this;
 				borrow_book(authData.uid, isbn, function(){
-					$(this).html("Done");
+					$(that).html("Done");
 				});
 			})
 		});
@@ -89,13 +90,32 @@ function loadMap(){
 		});
 	});
 }
+
+
 function renderBooks(books){
 	var renderedHTML = "<div class='list-group'>";
 	for(var i=0; i<books.length; i++){
 		if(books[i].status == 1){
+			var addressString = null;
+			if(books[i].lat != null && books[i].lon != null){
+				 $.ajax({
+	        		type: "GET",
+	        		url: "http://maps.googleapis.com/maps/api/geocode/json?latlng="+books[i].lat+","+books[i].lon,
+	        		async: false,
+	        		success : function(data) {
+	        			addressString = data.results[0].formatted_address;
+	            		//console.log(data.results[0].formatted_address);
+
+	        		}
+    			});
+			}
 			var status = "<span class='label label-success' style='margin-left:10px;'>Available</span>";
 			var btn = "<button class='btn btn-success pull-right' data-id='" + books[i].isbn +"''>Rent it!</button>";
-			var newHTML = "<a class='list-group-item book'><h4 class='title'>"+books[i].name+status+"</h4><p class='author'><b>Author</b>&nbsp;&nbsp;"+books[i].author+btn+"</p><div class='category'><b>Categories</b>&nbsp;&nbsp;"+books[i].catagory+"</div></a>";
+			var newHTML = "<a class='list-group-item book'><h4 class='title'>"+books[i].name+status+"</h4>";
+			if(addressString){
+				newHTML = newHTML+"<p class='author'><b>Address</b>&nbsp;&nbsp;"+addressString+"</p>";
+			}	
+			newHTML = newHTML+"<p class='author'><b>Author</b>&nbsp;&nbsp;"+books[i].author+btn+"</p><div class='category'><b>Categories</b>&nbsp;&nbsp;"+books[i].catagory+"</div></a>";
 			renderedHTML += newHTML;
 		}
 	}

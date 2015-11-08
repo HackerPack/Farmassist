@@ -318,22 +318,53 @@
         });
 
         getBorrowedBooks(authData.uid,function(data){
-          console.log("called borrowed books");
-          console.log(data);
           var loc = "<div class='list-group'>";
+          var isbns = [];
+          var dups = [];
           for(var i=0; i<data.length; i++){
-            var userName = 'a';
-            console.log(data[i].uid);
+              if($.inArray(data[i].isbn, dups) === -1){
+                dups.push(data[i].isbn);
+                continue;
+              }
+              if($.inArray(data[i].isbn, isbns) === -1) isbns.push(data[i].isbn);
+          };
+          console.log(isbns);
+          if(isbns.length == 0){
+            isbns = dups;
+          }
+          console.log(isbns);
+          for(var i=0; i<data.length; i++){
+            /*var userName = 'a';
             getUser(data[i].uid,function(owner){
               console.log("Owner name " + owner);
               userName = owner[0].fname;
-            });
-            var btn = "<button class='btn btn-success btn-xs pull-right' data-id='" + data[i].isbn +"' style='margin-left:10px;'>Return</button>";
-            loc = loc + "<a href='#' class='list-group-item'> <i class='fa fa-fw fa-book'></i> "+data[i].name+btn+"<span class='badge'>"+userName+"</span></a> ";
+            });*/
+            if(isbns.indexOf(data[i].isbn) > -1){
+              var btn = "<button class='return-book btn btn-success btn-xs pull-right' data-id='" + data[i].isbn +"' style='margin-left:10px;'>Return</button>";
+              loc = loc + "<a href='#' class='list-group-item'> <i class='fa fa-fw fa-book'></i> "+data[i].name+btn+"<span class='badge'></span></a> ";
+              isbns.splice(isbns.indexOf(data[i].isbn), 1);
+            }
           }
           loc += "</div>";
-          document.getElementById('bookBorrowed').innerHTML = loc;
+          $('#bookBorrowed').html(loc);
+
+          $(".return-book").click(function(){
+            console.log("awesomatic");
+            var isbn = $(this).data("id");
+            $(this).removeClass('btn-success');
+            $(this).addClass('btn-danger');
+            $(this).html("Returning");
+            var book = {"isbn": Number(isbn),
+                        "status": 1,
+                        "borrow_uid": null};
+            var that = this;
+            updateBook(book,  function(){
+              $(that).html("Returned");
+            });
+          })
         });
+
+
     </script>
 </body>
 

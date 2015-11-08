@@ -341,7 +341,9 @@
                     "lon": window.curLog,
                     "status": 1
                 };
-        saveBook(data);
+        saveBook(data, function(){
+          window.location.href = "borrow.html";
+        });
     })
   </script>
 </body>
