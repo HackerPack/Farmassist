@@ -2,20 +2,13 @@ $(function(){
 
 	function showBooks(query){
 		if(query){
-			console.log(query);
 			query = query.trim();
 		}
 
-		var data;
-		if(query){
-			console.log("there")
-		}
-		else{
-			var data = [{"name": "Check1", "author": "Venky", "category": ["a", "b"]},
-						{"name": "Check2", "author": "Bharathi", "category": ["asdfsd", "bsdfsdf"]}]
-		}
-		var renderedHTML = renderBooks(data);
-		$("#books").html(renderedHTML);
+		searchBook(query, function(data){
+			var renderedHTML = renderBooks(data);
+			$("#books").html(renderedHTML);
+		});
 	}
 
 	$("#search").change(function(){
@@ -72,9 +65,11 @@ function loadMap(){
 	});
 }
 function renderBooks(books){
+	console.log(books);
 	var renderedHTML = "<div class='list-group'>";
 	for(var i=0; i<books.length; i++){
-		var newHTML = "<a class='list-group-item book'><h4 class='title'>"+books[i].name+"</h4><p class='author'><b>Author</b>&nbsp;&nbsp;"+books[i].author+"</p><div class='category'><b>Categories</b>&nbsp;&nbsp;"+books[i].category.join()+"</div></a>";
+		console.log(a=books[i]);
+		var newHTML = "<a class='list-group-item book'><h4 class='title'>"+books[i].name+"</h4><p class='author'><b>Author</b>&nbsp;&nbsp;"+books[i].author+"</p><div class='category'><b>Categories</b>&nbsp;&nbsp;"+books[i].catagory+"</div></a>";
 		renderedHTML += newHTML;
 	}
 	renderedHTML += "</div>";

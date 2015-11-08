@@ -1,34 +1,29 @@
-function searchBook(callback){
+function searchBook(term, callback){
   var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
-  searchResult = [];
   bookRef.orderByChild("status").on("value", function(snapshot) {
 
-   var found=0;
-   snapshot.forEach(function(childSnapshot) {
-    var temp = JSON.stringify(childSnapshot.val());
-    var n = temp.search("Wu");
-    if(n>-1){
-      console.log(childSnapshot.val());
-      searchResult.push(childSnapshot.val());
-      console.log(searchResult);
-    }
-    else{
-     found =-1;
-    }
-    
-  });
+     var searchResult = [];
+     snapshot.forEach(function(childSnapshot) {
+        var temp = JSON.stringify(childSnapshot.val());
+        if(term){
+          var n = temp.search(term);
+          if(n>-1){
+            searchResult.push(childSnapshot.val());
+          }
+        }
+        else{
+         searchResult.push(childSnapshot.val());
+        }
+      });
 
-   if(found==-1){
-      console.log("Book not found");
-   }
-   callback(searchResult);
-});
+      callback(searchResult);
+  });
+}
 
 function saveBook(book){
   var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
   var book_data = {};
   book_data[book.isbn] = book;
-  //console.log(book_data);
   bookRef.update(book_data);
 }
 
