@@ -181,22 +181,22 @@
                 <div class="row">
                     <div class="col-lg-6">
 
-                        <form role="form">
+                        <div>
 
                             <div class="form-group">
                                 <label>Title</label>
-                                <input class="form-control" placeholder="Enter the book title">
+                                <input class="form-control" placeholder="Enter the book title" id="name">
                                 <!-- <p class="help-block">Example block-level help text here.</p> -->
                             </div>
 
                             <div class="form-group">
                                 <label>Author</label>
-                                <input class="form-control" placeholder="Enter the author of the book">
+                                <input class="form-control" placeholder="Enter the author of the book" id="author">
                             </div>
 
                             <div class="form-group">
                                 <label>ISBN</label>
-                                <input class="form-control" placeholder="Enter the ISBN code">
+                                <input class="form-control" placeholder="Enter the ISBN code" id="isbn">
                             </div>
 
                             <div class="form-group">
@@ -210,14 +210,19 @@
                             </div> -->
 
                             <div class="form-group">
-                                <label>Comments</label>
-                                <textarea class="form-control" rows="3" placeholder="Enter a brief comment about the book"></textarea>
+                                <label>Price</label>
+                                <input class="form-control" rows="3" placeholder="Enter price in dollars" id="price">
                             </div>
 
-                            <button type="submit" class="btn btn-default">Submit</button>
+                            <div class="form-group">
+                                <label>Categories</label>
+                                <input class="form-control" rows="3" placeholder="Enter categories" id="categories">
+                            </div>
+
+                            <button class="btn btn-default" id="submit">Submit</button>
                             <button type="reset" class="btn btn-default">Reset</button>
 
-                        </form>
+                        </div>
 
                     </div>
                     <div id="mapCanvas"></div>
@@ -325,6 +330,19 @@
         console.log(window.curLat);
         initialize();
     }
+
+    $("#submit").on("click", function(){
+        var data = {"name": $("#name").val(),
+                    "author": $("#author").val(),
+                    "isbn": $("#isbn").val(),
+                    "price": Number($("#price").val()),
+                    "catagory": $("#categories").val().split(","),
+                    "lat": window.curLat,
+                    "lon": window.curLog,
+                    "status": 1
+                };
+        saveBook(data);
+    })
   </script>
 </body>
 

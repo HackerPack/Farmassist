@@ -2,20 +2,13 @@ $(function(){
 
 	function showBooks(query){
 		if(query){
-			console.log(query);
 			query = query.trim();
 		}
 
-		var data;
-		if(query){
-			console.log("there")
-		}
-		else{
-			var data = [{"name": "Check1", "author": "Venky", "category": ["a", "b"]},
-						{"name": "Check2", "author": "Bharathi", "category": ["asdfsd", "bsdfsdf"]}]
-		}
-		var renderedHTML = renderBooks(data);
-		$("#books").html(renderedHTML);
+		searchBook(query, function(data){
+			var renderedHTML = renderBooks(data);
+			$("#books").html(renderedHTML);
+		});
 	}
 
 	$("#search").change(function(){
@@ -48,15 +41,15 @@ function loadMap(){
 	    red: L.icon({
 	      iconUrl: '/vLibrary/img/red.png',
 	      iconRetinaUrl: '/vLibrary/img/red.png',
-	      iconSize: [27, 31],
-	      iconAnchor: [13.5, 13.5],
+	      iconSize: [15, 15],
+	      iconAnchor: [5, 5],
 	      popupAnchor: [0, -11],
 	    }),
 	    green: L.icon({
-	      iconUrl: '/vLibrary/img/gren.png',
+	      iconUrl: '/vLibrary/img/green.png',
 	      iconRetinaUrl: '/vLibrary/img/green.png',
-	      iconSize: [31, 27],
-	      iconAnchor: [13.5, 13.5],
+	      iconSize: [15, 15],
+	      iconAnchor: [5, 5],
 	      popupAnchor: [0, -11],
 	    })
 	}
@@ -67,14 +60,30 @@ function loadMap(){
 		L.marker([position.coords.latitude, position.coords.longitude], {
 	        icon: icons.marker
 	    }).addTo(map);
-
-
+		searchBook(null, function(books){
+			for(var i=0; i<books.length; i++){
+				if(books[i].status == 0){
+					L.marker([books[i].lat, books[i].lon], {
+				        icon: icons.red
+				    }).addTo(map);
+				}
+				else{
+					L.marker([books[i].lat, books[i].lon], {
+				        icon: icons.green
+				    }).addTo(map);
+				}
+			}
+		});
 	});
 }
 function renderBooks(books){
 	var renderedHTML = "<div class='list-group'>";
 	for(var i=0; i<books.length; i++){
-		var newHTML = "<a class='list-group-item book'><h4 class='title'>"+books[i].name+"</h4><p class='author'><b>Author</b>&nbsp;&nbsp;"+books[i].author+"</p><div class='category'><b>Categories</b>&nbsp;&nbsp;"+books[i].category.join()+"</div></a>";
+		var status = "<span class='label label-success' style='margin-left:10px;'>Available</span>";
+		if(books[i].status == 0){
+			status = "<span class='label label-danger' style='margin-left:10px;'>Taken</span>";
+		}
+		var newHTML = "<a class='list-group-item book'><h4 class='title'>"+books[i].name+status+"</h4><p class='author'><b>Author</b>&nbsp;&nbsp;"+books[i].author+"</p><div class='category'><b>Categories</b>&nbsp;&nbsp;"+books[i].catagory+"</div></a>";
 		renderedHTML += newHTML;
 	}
 	renderedHTML += "</div>";
