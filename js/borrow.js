@@ -60,16 +60,30 @@ function loadMap(){
 		L.marker([position.coords.latitude, position.coords.longitude], {
 	        icon: icons.marker
 	    }).addTo(map);
-
-
+		searchBook(null, function(books){
+			for(var i=0; i<books.length; i++){
+				if(books[i].status == 0){
+					L.marker([books[i].lat, books[i].lon], {
+				        icon: icons.red
+				    }).addTo(map);
+				}
+				else{
+					L.marker([books[i].lat, books[i].lon], {
+				        icon: icons.green
+				    }).addTo(map);
+				}
+			}
+		});
 	});
 }
 function renderBooks(books){
-	console.log(books);
 	var renderedHTML = "<div class='list-group'>";
 	for(var i=0; i<books.length; i++){
-		console.log(a=books[i]);
-		var newHTML = "<a class='list-group-item book'><h4 class='title'>"+books[i].name+"</h4><p class='author'><b>Author</b>&nbsp;&nbsp;"+books[i].author+"</p><div class='category'><b>Categories</b>&nbsp;&nbsp;"+books[i].catagory+"</div></a>";
+		var status = "<span class='label label-success' style='margin-left:10px;'>Available</span>";
+		if(books[i].status == 0){
+			status = "<span class='label label-danger' style='margin-left:10px;'>Taken</span>";
+		}
+		var newHTML = "<a class='list-group-item book'><h4 class='title'>"+books[i].name+status+"</h4><p class='author'><b>Author</b>&nbsp;&nbsp;"+books[i].author+"</p><div class='category'><b>Categories</b>&nbsp;&nbsp;"+books[i].catagory+"</div></a>";
 		renderedHTML += newHTML;
 	}
 	renderedHTML += "</div>";
