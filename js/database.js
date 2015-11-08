@@ -1,7 +1,7 @@
 function searchBook(callback){
   var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
   searchResult = [];
-  bookRef.orderByChild("status").equals(0).on("value", function(snapshot) {
+  bookRef.orderByChild("status").on("value", function(snapshot) {
 
    var found=0;
    snapshot.forEach(function(childSnapshot) {
