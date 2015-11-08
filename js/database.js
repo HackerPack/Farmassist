@@ -1,6 +1,6 @@
 function searchBook(callback){
   searchResult = [];
-  bookRef.orderByChild("ISBN").on("value", function(snapshot) {
+  bookRef.orderByChild("status").equals(0).on("value", function(snapshot) {
 
    var found=0;
    snapshot.forEach(function(childSnapshot) {
