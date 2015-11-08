@@ -22,3 +22,10 @@ function searchBook(callback){
    }
    callback(searchResult);
 });
+
+function saveBook(book){
+  var book_data = {};
+  book_data[book.isbn] = book;
+  //console.log(book_data);
+  bookRef.update(book_data);
+}
