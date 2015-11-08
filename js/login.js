@@ -49,9 +49,19 @@ function checkSessionLogin(){
 	console.log(authData);
 	if(authData == null){
 		window.location.href = "index.html";
+	}else{
+		window.full_name = getFName(authData) + " "+ getLName(authData);
+		$(".username").html("&nbsp;&nbsp;" + window.full_name);
 	}
 }
 
 $("#logout_anchor").click(function(){
     logout();
 })
+
+
+searchBook(function(data){
+   alert(data);
+});
+
+
