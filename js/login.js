@@ -58,3 +58,10 @@ function checkSessionLogin(){
 $("#logout_anchor").click(function(){
     logout();
 })
+
+
+searchBook(function(data){
+   alert(data);
+});
+
+
