@@ -1,34 +1,29 @@
-function searchBook(callback){
+function searchBook(term, callback){
   var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
-  searchResult = [];
-  bookRef.orderByChild("status").equals(0).on("value", function(snapshot) {
+  bookRef.orderByChild("status").on("value", function(snapshot) {
 
-   var found=0;
-   snapshot.forEach(function(childSnapshot) {
-    var temp = JSON.stringify(childSnapshot.val());
-    var n = temp.search("Wu");
-    if(n>-1){
-      console.log(childSnapshot.val());
-      searchResult.push(childSnapshot.val());
-      console.log(searchResult);
-    }
-    else{
-     found =-1;
-    }
-    
+     var searchResult = [];
+     snapshot.forEach(function(childSnapshot) {
+        var temp = JSON.stringify(childSnapshot.val());
+        if(term){
+          var n = temp.search(term);
+          if(n>-1){
+            searchResult.push(childSnapshot.val());
+          }
+        }
+        else{
+         searchResult.push(childSnapshot.val());
+        }
+      });
+
+      callback(searchResult);
   });
-
-   if(found==-1){
-      console.log("Book not found");
-   }
-   callback(searchResult);
-});
+}
 
 function saveBook(book){
   var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
   var book_data = {};
   book_data[book.isbn] = book;
-  //console.log(book_data);
   bookRef.update(book_data);
 }
 
@@ -57,12 +52,6 @@ function getBorrowedBooks(uid, callback){
 
 
 
-
-
-
-var FIRE_BASE_URL = "https://dazzling-heat-1066.firebaseio.com/";
-var USERS_TABLE = "users/";
-
 function getUser(uid, callback){
 var user_data = [];
 var userRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+uid);
@@ -77,3 +66,41 @@ getUser('facebook:1037502162960482', function(data){
         //console.log(innerData.fname);
     });
 });
+
+function borrow_book(uid, isbn, callback){
+  var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
+  var singleBookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE+"/"+isbn);
+  var userRef = new Firebase(FIRE_BASE_URL+USERS_TABLE);
+  var borrowedRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+uid+'/nu_borrowed');
+  var bookOwner = null;
+
+  bookRef.child(isbn).update({
+    "status":0,
+    "borrow_uid": uid
+  });
+
+  borrowedRef.transaction(function(current_value){
+    return (parseInt(current_value) || 0) +1;
+  });
+
+  singleBookRef.once("value", function(snapshot){
+    bookOwner = snapshot.val().uid;
+    console.log(bookOwner);
+    var ownerRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+bookOwner+'/nu_lent');
+    ownerRef.transaction(function(current_value){
+      return (parseInt(current_value) || 0) +1;
+    });
+    ownerRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+bookOwner+'/price_lent');
+    ownerRef.transaction(function(current_value){
+      return (parseInt(current_value) || 0) + parseInt(snapshot.val().price);
+    });
+
+  borrowedRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+uid+'/price_borrowed');
+    borrowedRef.transaction(function(current_value){
+      return (parseInt(current_value) || 0) + parseInt(snapshot.val().price);
+    });
+
+  });
+
+}
+
