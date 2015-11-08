@@ -5,7 +5,7 @@ ref.onAuth(function(authData) {
     ref.child("users").child(authData.facebook.id).set({
       fname: getFName(authData),
       lname: getLName(authData),
-      id: getId(authData);
+      id: getId(authData)
     });
   }
 });
