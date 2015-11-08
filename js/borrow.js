@@ -17,8 +17,9 @@ $(function(){
 				$(this).removeClass('btn-success');
 				$(this).addClass('btn-danger');
 				$(this).html("Renting");
+				var that = this;
 				borrow_book(authData.uid, isbn, function(){
-					$(this).html("Done");
+					$(that).html("Done");
 				});
 			})
 		});
