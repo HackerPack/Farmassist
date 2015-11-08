@@ -57,7 +57,8 @@ var user_data = [];
 var userRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+uid);
 
 userRef.once('value', function(data) {
-	console.log(data.val());
+	//console.log(data.val());
+  user_data.push(data.val());
 	callback(user_data);
 	});
 }
@@ -103,4 +104,3 @@ function borrow_book(uid, isbn, callback){
   });
 
 }
-
