@@ -1,6 +1,6 @@
 var userData;
 function getUserData(userEmail){
-	alert("User email is" + userEmail);
+	console.log("User email is" + userEmail);
 	$.ajax({
 	        url: 'https://hackillinois.climate.com/api/users/details?email=' + userEmail + '&userId=',
 	        xhrFields: {
@@ -29,20 +29,6 @@ function getLName(authData){
 	return userData.lastname;
 }
 
-function login(){
-
-	ref.authWithOAuthPopup("facebook", function(error, authData) {
-  		if (error) {
-   			console.log("Login Failed!", error);
-  		} else {
-  			console.log("Authenticated successfully with payload:", authData.facebook.cachedUserProfile.first_name);
-  			checkSession();
-  		}
-	}, {
-  		remember: "sessionOnly"
-	});
-}
-
 function logout(){
 	ref.unauth();
 	window.location.href = "index.html";
@@ -61,7 +47,7 @@ function checkSession(){
 		window.location.href = "borrow.html";
 	}
 	if(authData == null){
-		alert("Checks session");
+		console.log("Checks session");
 		$.ajax({
 	        url: 'https://api.climate.com/api/authdemo/info/self-aware',
 	        xhrFields: {
@@ -84,7 +70,7 @@ function checkSession(){
 				window.location.href = "borrow.html";
 	        },
 	        error: function(error) {
-	          window.location.href = "index.html";
+	          //window.location.href = "index.html";
 	        }
 	      });
 	}
@@ -94,6 +80,7 @@ function checkSessionLogin(){
 	authData = ref.getAuth();
 	//console.log(authData);
 	if(authData == null){
+		console.log("Checks login session");
 		$.ajax({
 	        url: 'https://api.climate.com/api/authdemo/info/self-aware',
 	        xhrFields: {
