@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>vLibrary - crowd based library</title>
+    <title>FarmAssist - farmer life made easy</title>
 
     <link rel="stylesheet" href="css/styles.css">
     <!-- Bootstrap Core CSS -->
@@ -44,7 +44,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">vLibrary</a>
+                <a class="navbar-brand" href="index.html">FarmAssist</a>
             </div>
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
@@ -154,7 +154,7 @@
                         <a href="borrow.html"><i class="fa fa-fw fa-dashboard"></i> Borrow</a>
                     </li>
                     <li class="active">
-                        <a href="lend.html"><i class="fa fa-fw fa-edit"></i> Add a Book</a>
+                        <a href="lend.html"><i class="fa fa-fw fa-edit"></i> Add a Equipment</a>
                     </li>
                     <li>
                         <a href="account.html"><i class="fa fa-fw fa-table"></i> My Account</a>
@@ -172,7 +172,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            Book Information
+                            Equipment Information
                         </h1>
                     </div>
                 </div>
@@ -184,19 +184,14 @@
                         <div>
 
                             <div class="form-group">
-                                <label>Title</label>
-                                <input class="form-control" placeholder="Enter the book title" id="name">
+                                <label>Equipment Name</label>
+                                <input class="form-control" placeholder="Enter the equipment name" id="name">
                                 <!-- <p class="help-block">Example block-level help text here.</p> -->
                             </div>
 
                             <div class="form-group">
-                                <label>Author</label>
-                                <input class="form-control" placeholder="Enter the author of the book" id="author">
-                            </div>
-
-                            <div class="form-group">
-                                <label>ISBN</label>
-                                <input class="form-control" placeholder="Enter the ISBN code" id="isbn">
+                                <label>Description</label>
+                                <input class="form-control" placeholder="Provide a short description about the equipment" id="desc">
                             </div>
 
                             <div class="form-group">
@@ -333,15 +328,14 @@
 
     $("#submit").on("click", function(){
         var data = {"name": $("#name").val(),
-                    "author": $("#author").val(),
-                    "isbn": $("#isbn").val(),
+                    "description": $("#desc").val(),
                     "price": Number($("#price").val()),
                     "catagory": $("#categories").val().split(","),
                     "lat": window.curLat,
                     "lon": window.curLog,
                     "status": 1
                 };
-        saveBook(data, function(){
+        saveEquipment(data, function(){
           window.location.href = "borrow.html";
         });
     })
