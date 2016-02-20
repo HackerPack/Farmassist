@@ -38,22 +38,62 @@ function logout(){
 
 function checkSession(){
 	authData = ref.getAuth();
-	console.log(authData);
+	//console.log(authData);
 	if(authData){
 		window.location.href = "borrow.html";
+	}
+	if(authData == null){
+		$.ajax({
+	        url: 'https://api.climate.com/api/authdemo/info/self-aware',
+	        xhrFields: {
+	          withCredentials: true
+	        },
+	        dataType: 'json',
+	        success: function(response) {
+	        	window.full_name = response.headers_in["X-User-Email"];
+	        	$(".username").html("&nbsp;&nbsp;" + window.full_name);
+	        	window.location.href = "borrow.html";
+
+	        },
+	        error: function(error) {
+	          //window.location.href = "index.html";
+	        }
+	      });
 	}
 }
 
 function checkSessionLogin(){
 	authData = ref.getAuth();
-	console.log(authData);
+	//console.log(authData);
 	if(authData == null){
-		window.location.href = "index.html";
+		$.ajax({
+	        url: 'https://api.climate.com/api/authdemo/info/self-aware',
+	        xhrFields: {
+	          withCredentials: true
+	        },
+	        dataType: 'json',
+	        success: function(response) {
+	        	window.full_name = response.headers_in["X-User-Email"];
+	        	$(".username").html("&nbsp;&nbsp;" + window.full_name);
+	        },
+	        error: function(error) {
+	          window.location.href = "index.html";
+	        }
+	      });
+		
 	}else{
 		window.full_name = getFName(authData) + " "+ getLName(authData);
 		$(".username").html("&nbsp;&nbsp;" + window.full_name);
 	}
 }
+
+
+
+ function climatelogin(){
+    var redirectUrl = encodeURIComponent(window.location.href);
+    window.location.href = "https://climate.com/static/app-login/index.html?scope=openid+user&page=oidcauthn&mobile=true&response_type=code&redirect_uri=" + redirectUrl + "&client_id=dptrf0gopr40u9"
+ }
+
 
 $("#logout_anchor").click(function(){
     logout();
