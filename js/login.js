@@ -1,25 +1,32 @@
-ref.onAuth(function(authData) {
-  if (authData && isNewUser) {
-    // save the user's profile into the database so we can list users,
-    // use them in Security and Firebase Rules, and show profiles
-    ref.child("users").child(authData.facebook.id).set({
-      fname: getFName(authData),
-      lname: getLName(authData),
-      id: getId(authData)
-    });
-  }
-});
+var userData;
+function getUserData(userEmail){
+	alert("User email is" + userEmail);
+	$.ajax({
+	        url: 'https://hackillinois.climate.com/api/users/details?email=' + userEmail + '&userId=',
+	        xhrFields: {
+	          withCredentials: true
+	        },
+	        dataType: 'json',
+	        success: function(response) {
+	        	userData = response;
+	        	setUserDataInUI();
+	        },
+	        error: function(error) {
+	          userData = null;
+	        }
+	      });
+}
 
 function getId(authData){
-	return authData.facebook.id;
+	return userData.id;
 }
 
 function getFName(authData){
-	return authData.facebook.cachedUserProfile.first_name;
+	return userData.firstname;
 }
 
 function getLName(authData){
-	return authData.facebook.cachedUserProfile.last_name;
+	return userData.lastname;
 }
 
 function login(){
@@ -41,6 +48,12 @@ function logout(){
 	window.location.href = "index.html";
 }
 
+function setUserDataInUI()
+{
+	window.full_name = getFName() + " "+ getLName();
+	$(".username").html("&nbsp;&nbsp;" + window.full_name);
+}
+
 function checkSession(){
 	authData = ref.getAuth();
 	//console.log(authData);
@@ -48,6 +61,7 @@ function checkSession(){
 		window.location.href = "borrow.html";
 	}
 	if(authData == null){
+		alert("Checks session");
 		$.ajax({
 	        url: 'https://api.climate.com/api/authdemo/info/self-aware',
 	        xhrFields: {
@@ -55,13 +69,22 @@ function checkSession(){
 	        },
 	        dataType: 'json',
 	        success: function(response) {
-	        	window.full_name = response.headers_in["X-User-Email"];
-	        	$(".username").html("&nbsp;&nbsp;" + window.full_name);
-	        	window.location.href = "borrow.html";
+	        		
+	        	var ref = new Firebase("https://farmassist.firebaseio.com");
+				ref.authAnonymously(function(error, authData) {
+				  if (error) {
+				    console.log("Login Failed!", error);
+				  } else {
+				    console.log("Authenticated successfully with payload:", authData);
+				  }
+				});
 
+				getUserData(response.headers_in["X-User-Email"]);
+
+				window.location.href = "borrow.html";
 	        },
 	        error: function(error) {
-	          //window.location.href = "index.html";
+	          window.location.href = "index.html";
 	        }
 	      });
 	}
@@ -78,16 +101,24 @@ function checkSessionLogin(){
 	        },
 	        dataType: 'json',
 	        success: function(response) {
-	        	window.full_name = response.headers_in["X-User-Email"];
-	        	$(".username").html("&nbsp;&nbsp;" + window.full_name);
+	        	
+	        	var ref = new Firebase("https://farmassist.firebaseio.com");
+				ref.authAnonymously(function(error, authData) {
+				  if (error) {
+				    console.log("Login Failed!", error);
+				  } else {
+				    console.log("Authenticated successfully with payload:", authData);
+				  }
+				});
+
+				getUserData(response.headers_in["X-User-Email"]);
 	        },
 	        error: function(error) {
 	          window.location.href = "index.html";
 	        }
 	      });
-		
 	}else{
-		window.full_name = getFName(authData) + " "+ getLName(authData);
+		window.full_name = getFName() + " "+ getLName();
 		$(".username").html("&nbsp;&nbsp;" + window.full_name);
 	}
 }
