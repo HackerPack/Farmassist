@@ -20,11 +20,16 @@ function searchBook(term, callback){
   });
 }
 
-function saveBook(book){
+function saveBook(book, callback){
   var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
   var book_data = {};
   book_data[book.isbn] = book;
-  bookRef.update(book_data);
+  bookRef.update(book_data, callback);
+}
+
+function updateBook(book, callback){
+  var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE+book.isbn);
+  bookRef.update(book, callback);
 }
 
 function getMyBooks(uid, callback){
@@ -49,18 +54,18 @@ function getBorrowedBooks(uid, callback){
   });
 }
 
-
-
-
 function getUser(uid, callback){
 var user_data = [];
 var userRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+uid);
 
 userRef.once('value', function(data) {
-	console.log(data.val());
+	//console.log(data.val());
+  user_data.push(data.val());
 	callback(user_data);
 	});
 }
+
+
 getUser('facebook:1037502162960482', function(data){
     data.forEach(function(innerData){
         //console.log(innerData.fname);
@@ -103,4 +108,19 @@ function borrow_book(uid, isbn, callback){
   });
 
 }
-
+/*
+function donateToLibrary(amount){
+  var data = {"medium": "balance", "payee_id": LIBRARY_ACCOUNT_ID, "amount" : amount };
+  console.log(JSON.stringify(data));
+  console.log(JSON.stringify(ACCOUNT_URL+DEBIT_ACCOUNT_ID+TRANSFER_URL+CAPITAL_ONE_QUERY_PARAM));
+    alert(JSON.stringify(ACCOUNT_URL+DEBIT_ACCOUNT_ID+TRANSFER_URL+CAPITAL_ONE_QUERY_PARAM));
+    $.ajax({
+      url: ACCOUNT_URL+DEBIT_ACCOUNT_ID+TRANSFER_URL+CAPITAL_ONE_QUERY_PARAM,
+      type: "POST",
+      data: data,
+    //http://api.reimaginebanking.com/accounts/56241a14de4bf40b17112a77/transfers?key=2ec3d395b0e81344514ca1ecbae6edcb
+      success: function(results){
+         alert(results);
+      }
+    });
+}*/

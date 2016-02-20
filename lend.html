@@ -142,7 +142,7 @@
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                            <a href="#" id="logout_anchor"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
                         </li>
                     </ul>
                 </li>
@@ -154,7 +154,7 @@
                         <a href="borrow.html"><i class="fa fa-fw fa-dashboard"></i> Borrow</a>
                     </li>
                     <li class="active">
-                        <a href="lend.html"><i class="fa fa-fw fa-edit"></i> Lend</a>
+                        <a href="lend.html"><i class="fa fa-fw fa-edit"></i> Add a Book</a>
                     </li>
                     <li>
                         <a href="account.html"><i class="fa fa-fw fa-table"></i> My Account</a>
@@ -327,7 +327,7 @@
         //alert(x.value)curLat, curLog
         window.curLat = position.coords.latitude;
         window.curLog = position.coords.longitude;
-        console.log(window.curLat);
+        //console.log(window.curLat);
         initialize();
     }
 
@@ -341,7 +341,9 @@
                     "lon": window.curLog,
                     "status": 1
                 };
-        saveBook(data);
+        saveBook(data, function(){
+          window.location.href = "borrow.html";
+        });
     })
   </script>
 </body>
