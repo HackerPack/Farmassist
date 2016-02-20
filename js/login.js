@@ -1,5 +1,12 @@
-var userData;
-function getUserData(userEmail){
+function getUserData(userEmail, userAuth){
+
+	authData = ref.getAuth();
+
+	if(userAuth == null)
+	{
+		userAuth = authData;
+	}
+
 	console.log("User email is" + userEmail);
 	$.ajax({
 	        url: 'https://hackillinois.climate.com/api/users/details?email=' + userEmail + '&userId=',
@@ -8,36 +15,66 @@ function getUserData(userEmail){
 	        },
 	        dataType: 'json',
 	        success: function(response) {
-	        	userData = response;
-	        	setUserDataInUI();
+	        	var liveUserRef = ref.child(LIVE_USERS_TABLE);
+	        	var liveUserData = {};
+	        	liveUserData[userAuth.uid] = response;
+	        	liveUserRef.update(liveUserData, setUserDataInUI(userAuth));
+
+	        	var userRef = ref.child(USERS_TABLE);
+	        	userRef.once("value", function(snapshot) {
+					  var isUserExists = snapshot.child(response.id).exists();
+
+					  if(!isUserExists)
+					  {
+					  	var userData = {};
+					  	userData[response.id] = response;
+					  	userRef.update(userData);
+					  }
+				});
 	        },
 	        error: function(error) {
-	          userData = null;
 	        }
 	      });
 }
 
-function getId(authData){
-	return userData.id;
-}
+function getId(){
+	authData = ref.getAuth();
+	liveUserRef = new Firebase(FIRE_BASE_URL+LIVE_USERS_TABLE+authData.uid);
 
-function getFName(authData){
-	return userData.firstname;
-}
+	liveUserRef.once("value", function(snapshot){
+		var userID = snapshot.val().id;
 
-function getLName(authData){
-	return userData.lastname;
+		return userID;
+	});
 }
 
 function logout(){
+	authData = ref.getAuth();
+	
+	var liveUserRef = ref.child(LIVE_USERS_TABLE).child(authData.uid);
+	liveUserRef.remove();
 	ref.unauth();
 	window.location.href = "index.html";
 }
 
-function setUserDataInUI()
+function setUserDataInUI(userAuth)
 {
-	window.full_name = getFName() + " "+ getLName();
-	$(".username").html("&nbsp;&nbsp;" + window.full_name);
+	authData = ref.getAuth();
+	var liveUserRef;
+	if(authData == null)
+	{
+		liveUserRef = new Firebase(FIRE_BASE_URL+LIVE_USERS_TABLE+userAuth.uid);
+	} else {
+		liveUserRef = new Firebase(FIRE_BASE_URL+LIVE_USERS_TABLE+authData.uid);
+	}
+
+	liveUserRef.once("value", function(snapshot){
+		var firstname = snapshot.val().firstname;
+		var lastname = snapshot.val().lastname;
+
+		window.full_name = firstname.toString() + " "+ lastname.toString();
+		$(".username").html("&nbsp;&nbsp;" + window.full_name);
+	});
 }
 
 function checkSession(){
@@ -56,16 +93,15 @@ function checkSession(){
 	        dataType: 'json',
 	        success: function(response) {
 	        		
-	        	var ref = new Firebase("https://farmassist.firebaseio.com");
+	        	var ref = new Firebase(FIRE_BASE_URL);
 				ref.authAnonymously(function(error, authData) {
 				  if (error) {
 				    console.log("Login Failed!", error);
 				  } else {
 				    console.log("Authenticated successfully with payload:", authData);
+				    getUserData(response.headers_in["X-User-Email"], authData);
 				  }
 				});
-
-				getUserData(response.headers_in["X-User-Email"]);
 
 				window.location.href = "borrow.html";
 	        },
@@ -95,18 +131,16 @@ function checkSessionLogin(){
 				    console.log("Login Failed!", error);
 				  } else {
 				    console.log("Authenticated successfully with payload:", authData);
+				    getUserData(response.headers_in["X-User-Email"], authData);
 				  }
 				});
-
-				getUserData(response.headers_in["X-User-Email"]);
 	        },
 	        error: function(error) {
 	          window.location.href = "index.html";
 	        }
 	      });
 	}else{
-		window.full_name = getFName() + " "+ getLName();
-		$(".username").html("&nbsp;&nbsp;" + window.full_name);
+		setUserDataInUI(null);
 	}
 }
 

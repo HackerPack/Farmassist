@@ -1,6 +1,6 @@
-function searchBook(term, callback){
-  var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
-  bookRef.orderByChild("status").on("value", function(snapshot) {
+function searchEquipment(term, callback){
+  var equipmentRef = new Firebase(FIRE_BASE_URL+EQUIPMENTS_TABLE);
+  equipmentRef.orderByChild("status").on("value", function(snapshot) {
 
      var searchResult = [];
      snapshot.forEach(function(childSnapshot) {
@@ -20,22 +20,40 @@ function searchBook(term, callback){
   });
 }
 
-function saveBook(book, callback){
-  var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
-  var book_data = {};
-  book_data[book.isbn] = book;
-  bookRef.update(book_data, callback);
+function saveEquipment(equipment, callback){
+  var equipmentIDRef = new Firebase(FIRE_BASE_URL+EQUIPMENTS_ID_TABLE+"maxID");
+  var equipmentMaxID;
+
+  equipmentIDRef.once("value", function(snapshot){
+    if(isNaN(parseInt(snapshot.val())))
+    {
+            console.log(snapshot.val());
+        equipmentMaxID = 1;
+    } else {
+
+        equipmentMaxID = parseInt(snapshot.val());
+    }
+
+    var equipmentRef = new Firebase(FIRE_BASE_URL+EQUIPMENTS_TABLE);
+    var equipment_data = {};
+
+    equipment_data[equipmentMaxID] = equipment;
+    equipmentMaxID = equipmentMaxID + 1;
+    equipment["id"] = equipmentMaxID;
+    equipmentIDRef.set(equipmentMaxID);
+    equipmentRef.update(equipment_data, callback);
+  });
 }
 
-function updateBook(book, callback){
-  var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE+book.isbn);
-  bookRef.update(book, callback);
+function updateEquipment(equipment, callback){
+  var equipmentRef = new Firebase(FIRE_BASE_URL+EQUIPMENTS_TABLE+equipment.id);
+  equipmentRef.update(equipment, callback);
 }
 
-function getMyBooks(uid, callback){
+function getMyEquipments(uid, callback){
   var return_data = [];
-  var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
-  bookRef.orderByChild("uid").equalTo(uid).on("value", function(snapshot) {
+  var equipmentRef = new Firebase(FIRE_BASE_URL+EQUIPMENTS_TABLE);
+  equipmentRef.orderByChild("uid").equalTo(uid).on("value", function(snapshot) {
     snapshot.forEach(function(data){
       return_data.push(data.val());
     });
@@ -43,10 +61,10 @@ function getMyBooks(uid, callback){
   });
 }
 
-function getBorrowedBooks(uid, callback){
+function getBorrowedEquipments(uid, callback){
   var return_data = [];
-  var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
-  bookRef.orderByChild("borrow_uid").equalTo(uid).on("value", function(snapshot) {
+  var equipmentRef = new Firebase(FIRE_BASE_URL+EQUIPMENTS_TABLE);
+  equipmentRef.orderByChild("borrow_uid").equalTo(uid).on("value", function(snapshot) {
     snapshot.forEach(function(data){
       return_data.push(data.val());
     });
@@ -65,37 +83,30 @@ userRef.once('value', function(data) {
 	});
 }
 
-
-getUser('facebook:1037502162960482', function(data){
-    data.forEach(function(innerData){
-        //console.log(innerData.fname);
-    });
-});
-
-function borrow_book(uid, isbn, callback){
-  var bookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
-  var singleBookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE+"/"+isbn);
+function borrow_equipment(uid, equipmentId, callback){
+  var equipmentRef = new Firebase(FIRE_BASE_URL+EQUIPMENTS_TABLE);
+  var singleEquipmentRef = new Firebase(FIRE_BASE_URL+EQUIPMENTS_TABLE+equipmentId);
   var userRef = new Firebase(FIRE_BASE_URL+USERS_TABLE);
   var borrowedRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+uid+'/nu_borrowed');
-  var bookOwner = null;
+  var equipmentOwner = null;
 
-  bookRef.child(isbn).update({
+  equipmentRef.child(equipmentId).update({
     "status":0,
     "borrow_uid": uid
   });
 
-  borrowedRef.transaction(function(current_value){
+  equipmentRef.transaction(function(current_value){
     return (parseInt(current_value) || 0) +1;
   });
 
-  singleBookRef.once("value", function(snapshot){
-    bookOwner = snapshot.val().uid;
-    console.log(bookOwner);
-    var ownerRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+bookOwner+'/nu_lent');
+  singleEquipmentRef.once("value", function(snapshot){
+    equipmentOwner = snapshot.val().uid;
+    console.log(equipmentOwner);
+    var ownerRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+equipmentOwner+'/nu_lent');
     ownerRef.transaction(function(current_value){
       return (parseInt(current_value) || 0) +1;
     });
-    ownerRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+bookOwner+'/price_lent');
+    ownerRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+equipmentOwner+'/price_lent');
     ownerRef.transaction(function(current_value){
       return (parseInt(current_value) || 0) + parseInt(snapshot.val().price);
     });

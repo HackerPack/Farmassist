@@ -1,9 +1,11 @@
-var FIRE_BASE_URL = "https://dazzling-heat-1066.firebaseio.com/";
-var BOOKS_TABLE = "books/";
+var FIRE_BASE_URL = "https://farmassist.firebaseio.com/";
+var EQUIPMENTS_TABLE = "equipments/";
 var USERS_TABLE = "users/";
+var LIVE_USERS_TABLE = "live_users/"
+var EQUIPMENTS_ID_TABLE = "equipmentsID/"
 var ref = new Firebase(FIRE_BASE_URL);
 var isNewUser = true;
-var globalBookRef = new Firebase(FIRE_BASE_URL+BOOKS_TABLE);
+var globalEquipmentRef = new Firebase(FIRE_BASE_URL+EQUIPMENTS_TABLE);
 var globalUserRef = new Firebase(FIRE_BASE_URL+USERS_TABLE);
 var LIBRARY_ACCOUNT_ID = "56241a14de4bf40b17112a75";
 var DEBIT_ACCOUNT_ID = "56241a14de4bf40b17112a77";

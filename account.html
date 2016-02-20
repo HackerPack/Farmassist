@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Farm Assist</title>
+    <title>FarmAssist - farmer life made easy</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -156,7 +156,7 @@
                         <a href="borrow.html"><i class="fa fa-fw fa-dashboard"></i> Borrow</a>
                     </li>
                     <li>
-                        <a href="lend.html"><i class="fa fa-fw fa-edit"></i> Add a Book</a>
+                        <a href="lend.html"><i class="fa fa-fw fa-edit"></i> Add a Equipment</a>
                     </li>
                     <li class="active">
                         <a href="account.html"><i class="fa fa-fw fa-table"></i> My Account</a>
@@ -189,8 +189,8 @@
                                         <i class="fa fa-tasks fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div id="booksBorrowed" class="huge"></div>
-                                        <div>Total books borrowed</div>
+                                        <div id="equipmentsBorrowed" class="huge"></div>
+                                        <div>Total equipments borrowed</div>
                                     </div>
                                 </div>
                             </div>
@@ -205,8 +205,8 @@
                                         <i class="fa fa-share fa-5x"></i>
                                     </div>
                                     <div class="col-xs-9 text-right">
-                                        <div id="booksLent" class="huge"></div>
-                                        <div>Total books lent</div>
+                                        <div id="equipmentsLent" class="huge"></div>
+                                        <div>Total equipments lent</div>
                                     </div>
                                 </div>
                             </div>
@@ -252,9 +252,9 @@
                     <div class="col-lg-4">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h3 class="panel-title">Books Borrowed</h3>
+                                <h3 class="panel-title">Equipments Borrowed</h3>
                             </div>
-                            <div class="panel-body" id = "bookBorrowed">
+                            <div class="panel-body" id = "equipmentBorrowed">
 
                             </div>
                         </div>
@@ -263,9 +263,9 @@
                     <div class="col-lg-4">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h3 class="panel-title">Books lent</h3>
+                                <h3 class="panel-title">Equipments lent</h3>
                             </div>
-                            <div class="panel-body" id = "bookLent">
+                            <div class="panel-body" id = "equipmentLent">
 
                             </div>
                         </div>
@@ -300,24 +300,24 @@
 
         getUser(authData.uid,function(user){
           console.log("User details " + user[0]);
-          document.getElementById('booksBorrowed').innerHTML = parseInt(user[0].nu_borrowed) || 0;
-          document.getElementById('booksLent').innerHTML = parseInt(user[0].nu_lent) || 0;
+          document.getElementById('equipmentsBorrowed').innerHTML = parseInt(user[0].nu_borrowed) || 0;
+          document.getElementById('equipmentsLent').innerHTML = parseInt(user[0].nu_lent) || 0;
           document.getElementById('moneySaved').innerHTML = parseInt(user[0].price_borrowed) || 0;
           document.getElementById('moneyDonated').innerHTML = parseInt(user[0].price_lent) || 0;
         });
 
-        getMyBooks(authData.uid,function(books){
-          console.log("Called get my books");
-          console.log(books);
+        getMyEquipments(authData.uid,function(equipments){
+          console.log("Called get my equipments");
+          console.log(equipments);
           var loc = "<div class='list-group'>";
-          for(var i=0; i<books.length; i++){
-              loc = loc + " <a href='#' class='list-group-item'> <i class='fa fa-fw fa-share'></i>"+ books[i].name+"</a>";
+          for(var i=0; i<equipments.length; i++){
+              loc = loc + " <a href='#' class='list-group-item'> <i class='fa fa-fw fa-share'></i>"+ equipments[i].name+"</a>";
             }
           loc += "</div>";
-          document.getElementById('bookLent').innerHTML = loc;
+          document.getElementById('equipmentLent').innerHTML = loc;
         });
 
-        getBorrowedBooks(authData.uid,function(data){
+        getBorrowedEquipments(authData.uid,function(data){
           var loc = "<div class='list-group'>";
           var isbns = [];
           var dups = [];
@@ -346,19 +346,19 @@
             }
           }
           loc += "</div>";
-          $('#bookBorrowed').html(loc);
+          $('#equipmentBorrowed').html(loc);
 
-          $(".return-book").click(function(){
+          $(".return-equipment").click(function(){
             console.log("awesomatic");
-            var isbn = $(this).data("id");
+            var equipmentId = $(this).data("equipmentId");
             $(this).removeClass('btn-success');
             $(this).addClass('btn-danger');
             $(this).html("Returning");
-            var book = {"isbn": Number(isbn),
+            var equipment = {"equipmentId": Number(equipmentId),
                         "status": 1,
                         "borrow_uid": null};
             var that = this;
-            updateBook(book,  function(){
+            updateEquipment(equipmentId,  function(){
               $(that).html("Returned");
             });
           })
