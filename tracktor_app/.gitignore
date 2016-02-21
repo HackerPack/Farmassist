@@ -1,0 +1,12 @@
+
+platforms/android/.gradle/2.2.1/taskArtifacts/fileHashes.bin
+platforms/android/.gradle/2.2.1/taskArtifacts/fileSnapshots.bin
+platforms/android/.gradle/2.2.1/taskArtifacts/taskArtifacts.bin
+platforms/android/assets/www/js/Database.js
+platforms/android/assets/www/js/Map.js
+platforms/ios/www/index.html
+platforms/ios/www/js/HomeView.js
+platforms/ios/www/js/Login.js
+platforms/ios/www/js/app.js
+platforms/*
+platforms/android/*
