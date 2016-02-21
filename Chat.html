@@ -161,6 +161,9 @@
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
                     <li class="active">
+                        <a href="chat.html"><i class="fa fa-fw fa-comments"></i> Chat</a>
+                    </li>
+                    <li>
                         <a href="borrow.html"><i class="fa fa-fw fa-dashboard"></i> Borrow</a>
                     </li>
                     <li>
@@ -183,21 +186,13 @@
                     <div class="col-lg-12">
                         <h1 class="page-header">
                             Chat 
-                            <div class="btn-group" data-toggle="buttons" style="float:right;">
-                              <button class="btn btn-default active" id="list_mode">
-                                <input type="radio" name="options" autocomplete="off" checked> List View
-                              </buton>
-                              <button class="btn btn-default" id="map_mode">
-                                <input type="radio" name="options" autocomplete="off"> Map View
-                              </button>
-                            </div>
                         </h1>
                     </div>
                 </div>
                 <!-- /.row -->
 
                
-				<div class="row list_content" id="messagesDiv">
+				<div class="row list_content list-group" id="messagesDiv" style="height: 400px;overflow: auto;">
 
                 </div>
                 
@@ -205,20 +200,10 @@
 	
 			 <div class="row list_content">
                     <div class="form-group input-group">
-                        <input type="text" class="form-control" id="Messages" placeholder="Message...">
-                        <span class="input-group-btn"><button class="btn btn-default" type="button" id="search_btn"><i class="fa fa-search"></i></button></span>
+                        <input type="text" class="form-control" id="message" placeholder="Type message and press enter to send">
+                        <span class="input-group-btn"><button class="btn btn-default" type="button" id="message_btn"><i class="fa fa-comments"></i></button></span>
                     </div>
                 </div>
-				<div >
-				<input type="text" id="lname"/>
-				<input type="text" id="ltext" />
-				</div>
-                
-
-                <div class="row map_content">
-                    <div id="map" style="height:500px;"></div>
-                </div>
-
             </div>
             <!-- /.container-fluid -->
 
@@ -249,42 +234,7 @@
         checkSessionLogin();
     </script>
     <script src="js/database.js"></script>
-	<script>
-		authData = ref.getAuth();
-		liveUserRef = new Firebase(FIRE_BASE_URL+LIVE_USERS_TABLE+authData.uid);
-		liveUserRef.once("value", function(snapshot){
-        userid = snapshot.val().id;
-        });
-	</script>
-
-    <script src="js/borrow.js"></script>
-					<script>
-				  var myDataRef = new Firebase(FIRE_BASE_URL + CHAT_TABLE);
-				  $('#Messages').keypress(function (e) {
-				  
-					if (e.keyCode == 13) {
-					  console.log('here i am');
-					  var name=userid;
-					  var text = $('#Messages').val();
-					  var messageData = {};
-					  var timestamp=new Date().getTime();
-					  messageData["key"]= name.toString()+timestamp.toString(); 
-					  messageData["key"]["name"] = name;
-					  messageData["key"]["text"] = text;
-					  myDataRef.update(messageData);
-					  $('#Messages').val('');
-					}
-				  });
-				  myDataRef.on('child_added', function(snapshot) {
-					var message = snapshot.val();
-					displayChatMessage(message.name, message.text);
-				  });
-				  function displayChatMessage(name, text) {
-					document.getElementById('lname').innerHTML = name + "says :";
-					document.getElementById('ltext').innerHTML = text;
-					$('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
-				  };
-			</script>
+    <script src="js/chat.js"></script>
 
 </body>
 
