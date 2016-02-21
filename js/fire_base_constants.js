@@ -13,6 +13,8 @@ var DEBIT_ACCOUNT_ID = "56241a14de4bf40b17112a77";
 var ACCOUNT_URL = "http://api.reimaginebanking.com/accounts/"; 
 var TRANSFER_URL = "/transfers/"; 
 var CAPITAL_ONE_QUERY_PARAM = "?key=2ec3d395b0e81344514ca1ecbae6edcb";
+var FARM_TABLE = "farms/";
+var SUGG_TABLE = "suggestion/";
 
 /*
 globalUserRef.on("child_added", function(snapshot) {

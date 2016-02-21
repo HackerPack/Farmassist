@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Farm Assist</title>
+    <title>FarmAssist - farmer life made easy</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -23,26 +23,12 @@
     <!-- Custom Fonts -->
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
-    <!--&lt;!&ndash; ESRI css &ndash;&gt;-->
-    <!--<link rel="stylesheet" href="//cdn.jsdelivr.net/leaflet/0.7.3/leaflet.css" />-->
-    <!--<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/Leaflet/Leaflet.markercluster/v0.4.0/dist/MarkerCluster.Default.css">-->
-    <!--<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/Leaflet/Leaflet.markercluster/v0.4.0/dist/MarkerCluster.css">-->
-
-    <!-- Custom CSS -->
-    <link href="css/borrow.css" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-
     <![endif]-->
-    <style>
-        #map {
-            width: 1114px;
-            height: 400px;
-        }
-    </style>
 
 </head>
 
@@ -166,17 +152,14 @@
         <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav side-nav">
-                <li class="active">
+                <li>
                     <a href="borrow.html"><i class="fa fa-fw fa-dashboard"></i> Borrow</a>
                 </li>
                 <li>
-                    <a href="lend.html"><i class="fa fa-fw fa-edit"></i> Add a Book</a>
+                    <a href="lend.html"><i class="fa fa-fw fa-edit"></i> Add a Equipment</a>
                 </li>
-                <li>
+                <li class="active">
                     <a href="account.html"><i class="fa fa-fw fa-table"></i> My Account</a>
-                </li>
-                <li>
-                    <a href="myfarms.html"><i class="fa fa-fw fa-table"></i> My Farms</a>
                 </li>
             </ul>
         </div>
@@ -184,7 +167,38 @@
     </nav>
 
     <div id="page-wrapper">
-        <div id="map"></div>
+
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">
+                        Crop Suggestion
+                    </h1>
+                </div>
+            </div>
+            <!-- /.row -->
+
+            <div class="row">
+
+
+                <div class="col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Suggestions</h3>
+                        </div>
+                        <div class="panel-body" id = "equipmentLent">
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.row -->
+
+        </div>
+        <!-- /.container-fluid -->
 
     </div>
     <!-- /#page-wrapper -->
@@ -198,213 +212,45 @@
 <!-- Bootstrap Core JavaScript -->
 <script src="js/bootstrap.min.js"></script>
 
-<!-- Load Esri Leaflet from CDN -->
-<!--<script src="//cdn.jsdelivr.net/leaflet/0.7.3/leaflet.js"></script>-->
-<!--<script src="//cdn.jsdelivr.net/leaflet.esri/1.0.0/esri-leaflet.js"></script>-->
-<!--<script src="https://cdn.rawgit.com/Leaflet/Leaflet.markercluster/v0.4.0/dist/leaflet.markercluster.js"></script>-->
-<!--<script src="https://cdn.jsdelivr.net/leaflet.esri.clustered-feature-layer/1.0.2/esri-leaflet-clustered-feature-layer.js"></script>-->
-
 <script src="https://cdn.firebase.com/js/client/2.3.1/firebase.js"></script>
 
 <script src="js/fire_base_constants.js"></script>
-<script src="js/climate_constants.js"></script>
 <script src="js/login.js"></script>
+<script src="js/database.js"></script>
 
 <script>
     checkSessionLogin();
+
+    authData = ref.getAuth();
+    liveUserRef = new Firebase(FIRE_BASE_URL+LIVE_USERS_TABLE+authData.uid);
+
+    liveUserRef.once("value", function(snapshot){
+        userID = snapshot.val().id;
+
+        getUser(userID,function(user){
+            console.log("User details " + user[0]);
+//            document.getElementById('equipmentsBorrowed').innerHTML = parseInt(user[0].nu_borrowed) || 0;
+//            document.getElementById('equipmentsLent').innerHTML = parseInt(user[0].nu_lent) || 0;
+//            document.getElementById('moneySaved').innerHTML = parseInt(user[0].price_borrowed) || 0;
+//            document.getElementById('moneyDonated').innerHTML = parseInt(user[0].price_lent) || 0;
+        });
+
+        getCropSuggesion(userID, getMyFarms);
+
+       // getMyFarms(userID, suggestions, printFarms);
+    });
+    var printFarms = function(farms, suggestion){
+        console.log("Called get my equipments");
+        console.log(suggestion);
+        console.log(farms);
+        var loc = "<div class='list-group'>";
+        for(var i=0; i<farms.length; i++){
+            loc = loc + " <a href='#' class='list-group-item'> "+farms[i].farm_name+" - "+ farms[i].county + ' - '+ suggestion[farms[i].county.split(' ').join('_').toLowerCase()]+"</a>";
+        }
+        loc += "</div>";
+        document.getElementById('equipmentLent').innerHTML = loc;
+    };
 </script>
-<script src="js/database.js"></script>
-
-<script src="js/borrow.js"></script>
-<script>
-    function initMap() {
-        var mapDiv = document.getElementById('map');
-        map = new google.maps.Map(mapDiv, {
-            //center: {lat: 44.540, lng: -78.546},
-            zoom: 15
-        });
-
-        google.maps.event.addListener(map, 'zoom_changed', function() {
-            findLocation();
-        });
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function (position) {
-                initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                map.setCenter(initialLocation);
-            });
-        }
-    }
-
-    function findLocation(){
-        var bounds = map.getBounds();
-        var ne = bounds.getNorthEast(); // LatLng of the north-east corner
-        var sw = bounds.getSouthWest(); // LatLng of the south-west corder
-
-
-        data = {"ne_lat": ne.lat(),
-                "sw_lat": sw.lat(),
-                "ne_lon": ne.lng(),
-                "sw_lon": sw.lng()}
-        $.ajax({
-            url: FIELDS_URL,
-//            data: data,
-            xhrFields: {
-                withCredentials: true
-            },
-            dataType: 'json',
-            success: function(data){
-//                console.log(data);
-                redrawFields(data);
-            }
-        });
-    }
-    var formPath = null;
-    function redrawFeatures(data){
-        globalData = data;
-        if(formPath) {
-            formPath.setMap(null);
-        }
-        formPath = null;
-        var features = data["features"];
-        farmFields = [];
-        for(var i=0; i<features.length; i++){
-            farmFields = farmFields.concat();
-//            var flightPath = new google.maps.Polyline({
-//                path: createLatLang(features[i]["geometry"]["coordinates"][0][0]),
-//                geodesic: true,
-//                strokeColor: '#FF0000',
-//                strokeOpacity: 1.0,
-//                strokeWeight: 2
-//            });
-
-            formPath = new google.maps.Polygon({
-                paths: createLatLang(features[i]["geometry"]["coordinates"][0][0]),
-                strokeColor: '#FF0000',
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: '#46523C',
-                fillOpacity: 0.35
-            });
-
-            formPath.setMap(map);
-        }
-        // Construct the polygon.
-//        var fieldLines = new google.maps.Polygon({
-//            paths: farmFields,
-//            strokeColor: '#FF0000',
-//            strokeOpacity: 0.8,
-//            strokeWeight: 2,
-//            fillColor: '#FF0000',
-//            fillOpacity: 0.35
-//        });
-//        fieldLines.setMap(map);
-
-        flightPlanCoordinates = [
-            {lat: 40.114 ,lng: -88.191 },
-            {lat: 21.291, lng: -157.821},
-            {lat: -18.142, lng: 178.431},
-            {lat: -27.467, lng: 153.027}
-        ];
-
-
-
-//        console.log(fieldLines);
-    }
-
-    function redrawFields(data){
-        globalData = data;
-        if(formPath) {
-            formPath.setMap(null);
-        }
-        formPath = null;
-        var features = data["fields"];
-        for(var i=0; i<features.length; i++){
-//            farmFields = farmFields.concat();
-//            var flightPath = new google.maps.Polyline({
-//                path: createLatLang(features[i]["geometry"]["coordinates"][0][0]),
-//                geodesic: true,
-//                strokeColor: '#FF0000',
-//                strokeOpacity: 1.0,
-//                strokeWeight: 2
-//            });
-
-            if(features[i]["boundary"]["type"] == 'Polygon'){
-                handlePolygon(features[i]["boundary"]["coordinates"][0]);
-                updateFarmDetails(features[i]["centroid"]["coordinates"], features[i]["name"], features[i]['uuid']);
-            }
-            else if(features[i]["boundary"]["type"] == 'MultiPolygon'){
-                handleMultiPolygon(features[i]["boundary"]["coordinates"]);
-            }
-        }
-    }
-
-    function updateFarmDetails(data, name, uuid){
-        $.ajax({
-            url: COUNTY_URL+data[1]+','+data[0],
-            dataType: 'json',
-            success: function(data){
-                var county = data['results'][0]["address_components"][4]["short_name"];
-                console.log(county);
-                updateFarmDB(county, name, uuid);
-            }
-        });
-    }
-
-    function updateFarmDB(county, name, uuid){
-
-        authData = ref.getAuth();
-        liveUserRef = new Firebase(FIRE_BASE_URL+LIVE_USERS_TABLE+authData.uid);
-        liveUserRef.once("value", function(snapshot){
-            userid = snapshot.val().id;
-            var farmRef = ref.child(FARM_TABLE).child(userid);
-            var farmUserData = {};
-            var farmList = {};
-            farmList[uuid] = {
-                'farm_name': name,
-                'uid': userid,
-                'county': county
-            }
-
-            farmUserData[userid] = farmList;
-            farmRef.update(farmList);
-        });
-
-
-    }
-    function setInGoogleMap(data){
-        formPath = new google.maps.Polygon({
-            paths: data,
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: '#46523C',
-            fillOpacity: 0.35
-        });
-
-        formPath.setMap(map);
-    }
-
-    function handleMultiPolygon(data){
-        var dataArray = [];
-        for(var k=0; k<data.length; k++){
-//            console.log(data[k]);
-            handlePolygon( data[k][0]);
-        }
-    }
-    function handlePolygon(data){
-        var dataArray = [];
-        for(var j=0; j<data.length; j++){
-            dataArray.push( {"lat": data[j][1], "lng": data[j][0]});
-        }
-        setInGoogleMap(dataArray);
-    }
-
-
-
-</script>
-<script src="https://maps.googleapis.com/maps/api/js?&callback=initMap"
-        async defer></script>
 </body>
 
 </html>
