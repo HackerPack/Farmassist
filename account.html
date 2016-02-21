@@ -346,7 +346,7 @@
               userName = owner[0].fname;
             });*/
             if(ids.indexOf(data[i].id) > -1){
-              var btn = "<button class='return-book btn btn-success btn-xs pull-right' data-id='" + data[i].id +"' style='margin-left:10px;'>Return</button>";
+              var btn = "<button class='return-equipment btn btn-success btn-xs pull-right' data-id='" + data[i].id +"' style='margin-left:10px;'>Return</button>";
               loc = loc + "<a href='#' class='list-group-item'> <i class='fa fa-fw fa-book'></i> "+data[i].name+btn+"<span class='badge'></span></a> ";
               ids.splice(ids.indexOf(data[i].id), 1);
             }
@@ -356,15 +356,16 @@
 
           $(".return-equipment").click(function(){
             console.log("awesomatic");
-            var equipmentId = $(this).data("equipmentId");
+            var equipmentId = $(this).data("id");
             $(this).removeClass('btn-success');
+            console.log("returing equp");
             $(this).addClass('btn-danger');
             $(this).html("Returning");
-            var equipment = {"equipmentId": Number(equipmentId),
+            var equipment = {"id": equipmentId,
                         "status": 1,
                         "borrow_uid": null};
             var that = this;
-            updateEquipment(equipmentId,  function(){
+            updateEquipment(equipment,  function(){
               $(that).html("Returned");
             });
           })
