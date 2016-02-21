@@ -236,8 +236,10 @@
 
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
+                window.currentCoords = [position.coords.longitude, position.coords.latitude]
                 initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
                 map.setCenter(initialLocation);
+                findLocation();
             });
         }
     }
@@ -260,11 +262,79 @@
             },
             dataType: 'json',
             success: function(data){
-//                console.log(data);
                 redrawFields(data);
+                var latLng = new google.maps.LatLng(window.currentCoords[1], window.currentCoords[0]);
+                var marker = new google.maps.Marker({
+                    position: latLng,
+                    title: 'Point A',
+                    map: map,
+                    draggable: true
+                });
+                drawShortestPath(data, window.currentCoords);
+                google.maps.event.addListener(marker, 'dragend', function() {
+                    var pt = marker.getPosition();
+                    drawShortestPath(data, [pt.lng(), pt.lat()]);
+                });
             }
         });
     }
+
+    function distance(a, b){
+        var x = (a[0] - b[0]) * (a[0] - b[0]);
+        var y = (a[1] - b[1]) * (a[1] - b[1]);
+        return Math.sqrt(x+y);
+    }
+
+    window.suggestedPath = null;
+
+    function drawShortestPath(data, current){
+        var fields = data.fields;
+        var coords = [];
+        for(var i=0; i<fields.length; i++){
+            coords.push(fields[i].centroid.coordinates);
+        }
+        var path = [];
+        path.push({lat: current[1], lng: current[0]});
+        while(coords.length > 0){
+            var newCoords = [];
+            var minD = Number.MAX_SAFE_INTEGER;
+            var minCoords = [];
+            while(coords.length > 0){
+                var x = coords.pop();
+                var dist = distance(x, current);
+                if(dist < minD){
+                    if(minCoords.length > 0){
+                        newCoords.push(minCoords);
+                    }
+                    minD = dist;
+                    minCoords = x;
+                }
+                else{
+                    newCoords.push(x);
+                }
+
+            }
+            current = minCoords;
+            coords = newCoords;
+            path.push({lat: current[1], lng: current[0]});
+        }
+
+        if(window.suggestedPath){
+            window.suggestedPath.setMap(null);
+        }
+
+          window.suggestedPath = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: '#00FF00',
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+          });
+
+          window.suggestedPath.setMap(map);
+
+    }
+
     var formPath = null;
     function redrawFeatures(data){
         globalData = data;
