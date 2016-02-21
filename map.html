@@ -231,7 +231,7 @@
         });
 
         google.maps.event.addListener(map, 'zoom_changed', function() {
-            findLocation();
+            //findLocation();
         });
 
         if (navigator.geolocation) {
@@ -286,6 +286,8 @@
     }
 
     window.suggestedPath = null;
+    window.directionsDisplay = null;
+    window.directionsService = null;
 
     function drawShortestPath(data, current){
         var fields = data.fields;
@@ -318,7 +320,7 @@
             coords = newCoords;
             path.push({lat: current[1], lng: current[0]});
         }
-
+        
         if(window.suggestedPath){
             window.suggestedPath.setMap(null);
         }
@@ -332,6 +334,32 @@
           });
 
           window.suggestedPath.setMap(map);
+
+        var waypoints = [];
+        for(var i=1; i<path.length-1; i++){
+            waypoints.push({"location": path[i], "stopover":true});
+        }
+        if(window.directionsDisplay){
+            window.directionsDisplay.setMap(null);
+        }
+        if(! window.directionsService){
+            window.directionsDisplay = new google.maps.DirectionsRenderer;
+            window.directionsService = new google.maps.DirectionsService;
+        }
+        window.directionsDisplay.setMap(map);
+        window.directionsService.route({
+            origin: path[0],
+            destination: path[path.length-1],
+            waypoints: waypoints,
+            travelMode: google.maps.TravelMode.DRIVING
+          }, function(response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {console.log(response);
+              window.directionsDisplay.setDirections(response);
+              return;
+            } else {
+              window.alert('Directions request failed due to ' + status);
+            }
+          });
 
     }
 
