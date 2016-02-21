@@ -60,6 +60,30 @@ function getMyEquipments(uid, callback){
   });
 }
 
+function getMyFarms(uid, suggestions, callback){
+  var return_data = [];
+  var farmRef = new Firebase(FIRE_BASE_URL+FARM_TABLE+uid+"/");
+  console.log(uid);
+  farmRef.orderByChild("uid").equalTo(uid).on("value", function(snapshot) {
+    snapshot.forEach(function(data){
+      return_data.push(data.val());
+    });
+    callback(return_data, suggestions);
+  });
+}
+
+function getCropSuggesion(userID, callback){
+  var return_data = {};
+  var sugRef = new Firebase(FIRE_BASE_URL+SUGG_TABLE);
+  sugRef.on("value", function(snapshot) {
+    snapshot.forEach(function(data){
+      return_data[data.key().split(' ').join('_').toLowerCase()] = data.val();
+    });
+    callback(userID, return_data, printFarms);
+  });
+}
+
+
 function getBorrowedEquipments(uid, callback){
   var return_data = [];
   var equipmentRef = new Firebase(FIRE_BASE_URL+EQUIPMENTS_TABLE);

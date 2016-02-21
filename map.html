@@ -435,6 +435,7 @@
 
             if(features[i]["boundary"]["type"] == 'Polygon'){
                 handlePolygon(features[i]["boundary"]["coordinates"][0]);
+                updateFarmDetails(features[i]["centroid"]["coordinates"], features[i]["name"], features[i]['uuid']);
             }
             else if(features[i]["boundary"]["type"] == 'MultiPolygon'){
                 handleMultiPolygon(features[i]["boundary"]["coordinates"]);
@@ -442,6 +443,39 @@
         }
     }
 
+    function updateFarmDetails(data, name, uuid){
+        $.ajax({
+            url: COUNTY_URL+data[1]+','+data[0],
+            dataType: 'json',
+            success: function(data){
+                var county = data['results'][0]["address_components"][4]["short_name"];
+                console.log(county);
+                updateFarmDB(county, name, uuid);
+            }
+        });
+    }
+
+    function updateFarmDB(county, name, uuid){
+
+        authData = ref.getAuth();
+        liveUserRef = new Firebase(FIRE_BASE_URL+LIVE_USERS_TABLE+authData.uid);
+        liveUserRef.once("value", function(snapshot){
+            userid = snapshot.val().id;
+            var farmRef = ref.child(FARM_TABLE).child(userid);
+            var farmUserData = {};
+            var farmList = {};
+            farmList[uuid] = {
+                'farm_name': name,
+                'uid': userid,
+                'county': county
+            }
+
+            farmUserData[userid] = farmList;
+            farmRef.update(farmList);
+        });
+
+
+    }
     function setInGoogleMap(data){
         formPath = new google.maps.Polygon({
             paths: data,
