@@ -209,7 +209,10 @@
                         <span class="input-group-btn"><button class="btn btn-default" type="button" id="search_btn"><i class="fa fa-search"></i></button></span>
                     </div>
                 </div>
-
+				<div >
+				<input type="text" id="lname"/>
+				<input type="text" id="ltext" />
+				</div>
                 
 
                 <div class="row map_content">
@@ -277,9 +280,6 @@
 					displayChatMessage(message.name, message.text);
 				  });
 				  function displayChatMessage(name, text) {
-					
-					<label class="list-group-item-heading" id="lname">
-					<label class="list-group-item-text" id="ltext">
 					document.getElementById('lname').innerHTML = name + "says :";
 					document.getElementById('ltext').innerHTML = text;
 					$('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
