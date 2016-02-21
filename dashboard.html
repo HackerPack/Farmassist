@@ -168,7 +168,7 @@
                         <a href="chat.html"><i class="fa fa-fw fa-comments"></i> Chat</a>
                     </li>
                     <li>
-                        <a href="suggest.html"><i class="fa fa-fw fa-fire"></i> Suggest</a>
+                        <a href="suggest.html"><i class="fa fa-fw fa-fire"></i> Suggestion</a>
                     </li>
                 </ul>
             </div>
@@ -274,11 +274,25 @@
                             <div class="panel-heading">
                                 <h3 class="panel-title">Equipments lent</h3>
                             </div>
+                            <div class="panel-body" id = "lent_equipment">
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-lg-4">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">My Equipments</h3>
+                            </div>
                             <div class="panel-body" id = "equipmentLent">
 
                             </div>
                         </div>
                     </div>
+
+
 
                 </div>
                 <!-- /.row -->
@@ -330,6 +344,17 @@
             }
           loc += "</div>";
           document.getElementById('equipmentLent').innerHTML = loc;
+        });
+
+        getMyLentEquipments(userID,function(equipments){
+            console.log("Called get my equipments");
+            console.log(equipments);
+            var loc = "<div class='list-group'>";
+            for(var i=0; i<equipments.length; i++){
+                loc = loc + " <a href='#' class='list-group-item'> <i class='fa fa-fw fa-share'></i>"+ equipments[i].name+"</a>";
+            }
+            loc += "</div>";
+            document.getElementById('lent_equipment').innerHTML = loc;
         });
 
         getBorrowedEquipments(userID,function(data){

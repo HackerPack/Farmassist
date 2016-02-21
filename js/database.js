@@ -53,8 +53,23 @@ function getMyEquipments(uid, callback){
   var return_data = [];
   var equipmentRef = new Firebase(FIRE_BASE_URL+EQUIPMENTS_TABLE);
   equipmentRef.orderByChild("uid").equalTo(uid).on("value", function(snapshot) {
+    return_data = [];
     snapshot.forEach(function(data){
       return_data.push(data.val());
+    });
+    callback(return_data);
+  });
+}
+
+function getMyLentEquipments(uid, callback){
+  var return_data = [];
+  var equipmentRef = new Firebase(FIRE_BASE_URL+EQUIPMENTS_TABLE);
+  equipmentRef.orderByChild("uid").equalTo(uid).on("value", function(snapshot) {
+    return_data = [];
+    snapshot.forEach(function(data){
+      if(data.val().status == 0) {
+        return_data.push(data.val());
+      }
     });
     callback(return_data);
   });
