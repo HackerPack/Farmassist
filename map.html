@@ -40,7 +40,7 @@
     <style>
         #map {
             width: 1114px;
-            height: 400px;
+            height: 575px;
         }
     </style>
 
@@ -190,6 +190,16 @@
     </nav>
 
     <div id="page-wrapper">
+        <div style="position: absolute;
+    right: 10px;
+    padding: 10px;
+    background: wheat;
+    border: 1px solid #777;
+    border-radius: 5px;
+    z-index: 1;">
+            <div><b>Distance:</b> <span id="distance"></span> miles</div>
+            <div><b>Time: </b><span id="time"></span> minutes</div>
+        </div>
         <div id="map"></div>
 
     </div>
@@ -353,9 +363,20 @@
             waypoints: waypoints,
             travelMode: google.maps.TravelMode.DRIVING
           }, function(response, status) {
-            if (status == google.maps.DirectionsStatus.OK) {console.log(response);
+            if (status == google.maps.DirectionsStatus.OK) {
+                var route = response.routes[0].legs;
+                var dist = 0, time = 0;
+                for(var i=0; i<route.length; i++){
+                    dist += route[i].distance.value;
+                    time += route[i].duration.value;
+                }
+                dist *= 0.000621371192;
+                time /= 60;
+                dist = Math.round(dist * 100) / 100;
+                time = Math.round(time * 100) / 100
+                $("#distance").html(dist);
+                $("#time").html(time);
               window.directionsDisplay.setDirections(response);
-              return;
             } else {
               window.alert('Directions request failed due to ' + status);
             }
@@ -449,7 +470,7 @@
             dataType: 'json',
             success: function(data){
                 var county = data['results'][0]["address_components"][4]["short_name"];
-                console.log(county);
+//                console.log(county);
                 updateFarmDB(county, name, uuid);
             }
         });
