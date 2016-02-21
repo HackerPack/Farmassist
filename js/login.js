@@ -43,14 +43,14 @@ function getId(){
 
 	liveUserRef.once("value", function(snapshot){
 		var userID = snapshot.val().id;
-
+		console.log(snapshot);
 		return userID;
 	});
 }
 
 function logout(){
 	authData = ref.getAuth();
-	
+
 	var liveUserRef = ref.child(LIVE_USERS_TABLE).child(authData.uid);
 	liveUserRef.remove();
 	ref.unauth();

@@ -298,7 +298,13 @@
     <script>
         checkSessionLogin();
 
-        getUser(authData.uid,function(user){
+        authData = ref.getAuth();
+        liveUserRef = new Firebase(FIRE_BASE_URL+LIVE_USERS_TABLE+authData.uid);
+
+        liveUserRef.once("value", function(snapshot){
+            userID = snapshot.val().id;
+
+            getUser(userID,function(user){
           console.log("User details " + user[0]);
           document.getElementById('equipmentsBorrowed').innerHTML = parseInt(user[0].nu_borrowed) || 0;
           document.getElementById('equipmentsLent').innerHTML = parseInt(user[0].nu_lent) || 0;
@@ -306,7 +312,7 @@
           document.getElementById('moneyDonated').innerHTML = parseInt(user[0].price_lent) || 0;
         });
 
-        getMyEquipments(authData.uid,function(equipments){
+        getMyEquipments(userID,function(equipments){
           console.log("Called get my equipments");
           console.log(equipments);
           var loc = "<div class='list-group'>";
@@ -317,32 +323,32 @@
           document.getElementById('equipmentLent').innerHTML = loc;
         });
 
-        getBorrowedEquipments(authData.uid,function(data){
+        getBorrowedEquipments(userID,function(data){
           var loc = "<div class='list-group'>";
-          var isbns = [];
+          var ids = [];
           var dups = [];
           for(var i=0; i<data.length; i++){
-              if($.inArray(data[i].isbn, dups) === -1){
-                dups.push(data[i].isbn);
+              if($.inArray(data[i].id, dups) === -1){
+                dups.push(data[i].id);
                 continue;
               }
-              if($.inArray(data[i].isbn, isbns) === -1) isbns.push(data[i].isbn);
+              if($.inArray(data[i].id, ids) === -1) ids.push(data[i].id);
           };
-          console.log(isbns);
-          if(isbns.length == 0){
-            isbns = dups;
+          console.log(ids);
+          if(ids.length == 0){
+            ids = dups;
           }
-          console.log(isbns);
+          console.log(ids);
           for(var i=0; i<data.length; i++){
             /*var userName = 'a';
             getUser(data[i].uid,function(owner){
               console.log("Owner name " + owner);
               userName = owner[0].fname;
             });*/
-            if(isbns.indexOf(data[i].isbn) > -1){
-              var btn = "<button class='return-book btn btn-success btn-xs pull-right' data-id='" + data[i].isbn +"' style='margin-left:10px;'>Return</button>";
+            if(ids.indexOf(data[i].id) > -1){
+              var btn = "<button class='return-book btn btn-success btn-xs pull-right' data-id='" + data[i].id +"' style='margin-left:10px;'>Return</button>";
               loc = loc + "<a href='#' class='list-group-item'> <i class='fa fa-fw fa-book'></i> "+data[i].name+btn+"<span class='badge'></span></a> ";
-              isbns.splice(isbns.indexOf(data[i].isbn), 1);
+              ids.splice(ids.indexOf(data[i].id), 1);
             }
           }
           loc += "</div>";
@@ -363,8 +369,7 @@
             });
           })
         });
-
-
+        });
     </script>
 </body>
 

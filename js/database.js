@@ -27,7 +27,6 @@ function saveEquipment(equipment, callback){
   equipmentIDRef.once("value", function(snapshot){
     if(isNaN(parseInt(snapshot.val())))
     {
-            console.log(snapshot.val());
         equipmentMaxID = 1;
     } else {
 
@@ -38,8 +37,8 @@ function saveEquipment(equipment, callback){
     var equipment_data = {};
 
     equipment_data[equipmentMaxID] = equipment;
-    equipmentMaxID = equipmentMaxID + 1;
     equipment["id"] = equipmentMaxID;
+    equipmentMaxID = equipmentMaxID + 1;
     equipmentIDRef.set(equipmentMaxID);
     equipmentRef.update(equipment_data, callback);
   });
@@ -95,13 +94,8 @@ function borrow_equipment(uid, equipmentId, callback){
     "borrow_uid": uid
   });
 
-  equipmentRef.transaction(function(current_value){
-    return (parseInt(current_value) || 0) +1;
-  });
-
   singleEquipmentRef.once("value", function(snapshot){
     equipmentOwner = snapshot.val().uid;
-    console.log(equipmentOwner);
     var ownerRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+equipmentOwner+'/nu_lent');
     ownerRef.transaction(function(current_value){
       return (parseInt(current_value) || 0) +1;
@@ -111,9 +105,14 @@ function borrow_equipment(uid, equipmentId, callback){
       return (parseInt(current_value) || 0) + parseInt(snapshot.val().price);
     });
 
-  borrowedRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+uid+'/price_borrowed');
+    borrowedRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+uid+'/price_borrowed');
     borrowedRef.transaction(function(current_value){
       return (parseInt(current_value) || 0) + parseInt(snapshot.val().price);
+    });
+
+    borrowedRef = new Firebase(FIRE_BASE_URL+USERS_TABLE+"/"+uid+'/nu_borrowed');
+    borrowedRef.transaction(function(current_value){
+      return (parseInt(current_value) || 0) +1;
     });
 
   });

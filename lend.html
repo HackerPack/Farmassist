@@ -254,6 +254,13 @@
 
     <script>
 
+    authData = ref.getAuth();
+    liveUserRef = new Firebase(FIRE_BASE_URL+LIVE_USERS_TABLE+authData.uid);
+
+    liveUserRef.once("value", function(snapshot){
+        userID = snapshot.val().id;
+    });
+
     var geocoder = new google.maps.Geocoder();
     function geocodePosition(pos) {
         geocoder.geocode({
@@ -333,7 +340,8 @@
                     "catagory": $("#categories").val().split(","),
                     "lat": window.curLat,
                     "lon": window.curLog,
-                    "status": 1
+                    "status": 1,
+                    "uid": userID
                 };
         saveEquipment(data, function(){
           window.location.href = "borrow.html";

@@ -14,14 +14,21 @@ $(function(){
 					return;
 				}
 				var equipmentId = $(this).data("id");
-				alert("Equ id is " + equipmentId);
-				return;
 				$(this).removeClass('btn-success');
 				$(this).addClass('btn-danger');
+
 				$(this).html("Renting");
 				var that = this;
-				borrow_equipment(authData.uid, equipmentId, function(){
+
+				authData = ref.getAuth();
+			    liveUserRef = new Firebase(FIRE_BASE_URL+LIVE_USERS_TABLE+authData.uid);
+
+			    liveUserRef.once("value", function(snapshot){
+			        userID = snapshot.val().id;
+
+			        borrow_equipment(userID, equipmentId, function(){
 					$(that).html("Done");
+			    });
 				});
 			})
 		});
@@ -49,21 +56,21 @@ $(function(){
 function loadMap(){
 	var icons = {
 	    marker: L.icon({
-	      iconUrl: '/vLibrary/img/marker-icon.png',
-	      iconRetinaUrl: '/vLibrary/img/marker-icon.png',
+	      iconUrl: '/img/marker-icon.png',
+	      iconRetinaUrl: '/img/marker-icon.png',
 	      iconAnchor: [13.5, 17.5],
 	      popupAnchor: [0, -11],
 	    }),
 	    red: L.icon({
-	      iconUrl: '/vLibrary/img/red.png',
-	      iconRetinaUrl: '/vLibrary/img/red.png',
+	      iconUrl: '/img/red.png',
+	      iconRetinaUrl: '/img/red.png',
 	      iconSize: [15, 15],
 	      iconAnchor: [5, 5],
 	      popupAnchor: [0, -11],
 	    }),
 	    green: L.icon({
-	      iconUrl: '/vLibrary/img/green.png',
-	      iconRetinaUrl: '/vLibrary/img/green.png',
+	      iconUrl: '/img/green.png',
+	      iconRetinaUrl: '/img/green.png',
 	      iconSize: [15, 15],
 	      iconAnchor: [5, 5],
 	      popupAnchor: [0, -11],
@@ -112,7 +119,7 @@ function renderEquipments(equipments){
     			});
 			}
 			var status = "<span class='label label-success' style='margin-left:10px;'>Available</span>";
-			var btn = "<button class='btn btn-success pull-right' data-id='" + equipments[i].equipmentId +"''>Rent it!</button>";
+			var btn = "<button class='btn btn-success pull-right' data-id='" + equipments[i].id +"''>Rent it!</button>";
 			var newHTML = "<a class='list-group-item book'><h4 class='title'>"+equipments[i].name+status+"</h4>";
 			if(addressString){
 				newHTML = newHTML+"<p class='desc'><b>Address</b>&nbsp;&nbsp;"+addressString+"</p>";
