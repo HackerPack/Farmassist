@@ -1,6 +1,7 @@
 var FIRE_BASE_URL = "https://farmassist.firebaseio.com/";
 var EQUIPMENTS_TABLE = "equipments/";
 var USERS_TABLE = "users/";
+var CHAT_TABLE = "chats/";
 var LIVE_USERS_TABLE = "live_users/"
 var EQUIPMENTS_ID_TABLE = "equipmentsID/"
 var ref = new Firebase(FIRE_BASE_URL);
